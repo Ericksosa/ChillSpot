@@ -1,4 +1,14 @@
+using ChillSpot.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Obtener la cadena de conexión desde la configuración
+var connectionString = builder.Configuration["Logging:LogLevel:ConexionSql"];
+
+// Registrar el DbContext usando la cadena de conexión
+builder.Services.AddDbContext<chillSpotDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -24,6 +34,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

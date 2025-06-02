@@ -65,3 +65,4 @@ node_modules/
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+appsettings.json
