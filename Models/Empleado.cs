@@ -15,7 +15,7 @@ public partial class Empleado
 
     public decimal? PorcientoComision { get; set; }
 
-    public DateOnly FechaIngreso { get; set; }
+    public DateTime FechaIngreso { get; set; }
 
     public long EstadoId { get; set; }
 
