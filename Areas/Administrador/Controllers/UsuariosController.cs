@@ -20,10 +20,19 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var chillSpotDbContext = _context.Usuarios.Include(u => u.Rol);
-            return View(await chillSpotDbContext.ToListAsync());
+            var usuarios = _context.Usuarios.Include(u => u.Rol).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                usuarios = usuarios.Where(u =>
+                    u.Nombre.Contains(searchString) ||
+                    u.Correo.Contains(searchString));
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            return View(await usuarios.ToListAsync());
         }
 
         public async Task<IActionResult> Details(long? id)
