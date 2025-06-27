@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 
-namespace ChillSpot.Controllers
+namespace ChillSpot.Areas.Administrador.Controllers
 {
-    public class EstadosController : Controller
+    [Area("Administrador")]
+    public class UsuariosController : Controller
     {
         private readonly chillSpotDbContext _context;
 
-        public EstadosController(chillSpotDbContext context)
+        public UsuariosController(chillSpotDbContext context)
         {
             _context = context;
         }
 
-        // GET: Estados
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Estados.ToListAsync());
+            var chillSpotDbContext = _context.Usuarios.Include(u => u.Rol);
+            return View(await chillSpotDbContext.ToListAsync());
         }
 
-        // GET: Estados/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -33,39 +33,37 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var estado = await _context.Estados
+            var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (estado == null)
+            if (usuario == null)
             {
                 return NotFound();
             }
 
-            return View(estado);
+            return View(usuario);
         }
 
-        // GET: Estados/Create
         public IActionResult Create()
         {
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id");
             return View();
         }
 
-        // POST: Estados/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion")] Estado estado)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Correo,Clave,RolId")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(estado);
+                _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(estado);
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+            return View(usuario);
         }
 
-        // GET: Estados/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -73,22 +71,20 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var estado = await _context.Estados.FindAsync(id);
-            if (estado == null)
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
             {
                 return NotFound();
             }
-            return View(estado);
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+            return View(usuario);
         }
 
-        // POST: Estados/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Descripcion")] Estado estado)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Correo,Clave,RolId")] Usuario usuario)
         {
-            if (id != estado.Id)
+            if (id != usuario.Id)
             {
                 return NotFound();
             }
@@ -97,12 +93,12 @@ namespace ChillSpot.Controllers
             {
                 try
                 {
-                    _context.Update(estado);
+                    _context.Update(usuario);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EstadoExists(estado.Id))
+                    if (!UsuarioExists(usuario.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +109,10 @@ namespace ChillSpot.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(estado);
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+            return View(usuario);
         }
 
-        // GET: Estados/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -124,34 +120,33 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var estado = await _context.Estados
+            var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (estado == null)
+            if (usuario == null)
             {
                 return NotFound();
             }
 
-            return View(estado);
+            return View(usuario);
         }
 
-        // POST: Estados/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var estado = await _context.Estados.FindAsync(id);
-            if (estado != null)
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario != null)
             {
-                _context.Estados.Remove(estado);
+                _context.Usuarios.Remove(usuario);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool EstadoExists(long id)
+        private bool UsuarioExists(long id)
         {
-            return _context.Estados.Any(e => e.Id == id);
+            return _context.Usuarios.Any(e => e.Id == id);
         }
     }
 }

@@ -8,8 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 
-namespace ChillSpot.Controllers
+namespace ChillSpot.Areas.Administrador.Controllers
 {
+    [Area("Administrador")]
     public class ClientesController : Controller
     {
         private readonly chillSpotDbContext _context;
@@ -73,7 +74,7 @@ namespace ChillSpot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Models.Cliente cliente)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -139,7 +140,7 @@ namespace ChillSpot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Cliente cliente)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Models.Cliente cliente)
         {
             if (id != cliente.Id)
             {

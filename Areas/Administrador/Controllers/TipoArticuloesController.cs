@@ -8,25 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 
-namespace ChillSpot.Controllers
+namespace ChillSpot.Areas.Administrador.Controllers
 {
-    public class ElencoController : Controller
+    [Area("Administrador")]
+    public class TipoArticuloesController : Controller
     {
         private readonly chillSpotDbContext _context;
 
-        public ElencoController(chillSpotDbContext context)
+        public TipoArticuloesController(chillSpotDbContext context)
         {
             _context = context;
         }
 
-        // GET: Elenco
+        
         public async Task<IActionResult> Index()
         {
-            var chillSpotDbContext = _context.Elencos.Include(e => e.RolProfesional);
+            var chillSpotDbContext = _context.TipoArticulos.Include(t => t.Estado);
             return View(await chillSpotDbContext.ToListAsync());
         }
 
-        // GET: Elenco/Details/5
+        
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -34,42 +35,39 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var elenco = await _context.Elencos
-                .Include(e => e.RolProfesional)
+            var tipoArticulo = await _context.TipoArticulos
+                .Include(t => t.Estado)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (elenco == null)
+            if (tipoArticulo == null)
             {
                 return NotFound();
             }
 
-            return View(elenco);
+            return View(tipoArticulo);
         }
 
-        // GET: Elenco/Create
+        
         public IActionResult Create()
         {
-            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre");
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
             return View();
         }
 
-        // POST: Elenco/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,FechaNacimiento,RolProfesionalId")] Elenco elenco)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,EstadoId,Descripcion")] TipoArticulo tipoArticulo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(elenco);
+                _context.Add(tipoArticulo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
-            return View(elenco);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            return View(tipoArticulo);
         }
 
-        // GET: Elenco/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -77,23 +75,20 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var elenco = await _context.Elencos.FindAsync(id);
-            if (elenco == null)
+            var tipoArticulo = await _context.TipoArticulos.FindAsync(id);
+            if (tipoArticulo == null)
             {
                 return NotFound();
             }
-            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
-            return View(elenco);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            return View(tipoArticulo);
         }
 
-        // POST: Elenco/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Apellido,FechaNacimiento,RolProfesionalId")] Elenco elenco)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,EstadoId,Descripcion")] TipoArticulo tipoArticulo)
         {
-            if (id != elenco.Id)
+            if (id != tipoArticulo.Id)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace ChillSpot.Controllers
             {
                 try
                 {
-                    _context.Update(elenco);
+                    _context.Update(tipoArticulo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ElencoExists(elenco.Id))
+                    if (!TipoArticuloExists(tipoArticulo.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +113,10 @@ namespace ChillSpot.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
-            return View(elenco);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            return View(tipoArticulo);
         }
 
-        // GET: Elenco/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -130,35 +124,34 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var elenco = await _context.Elencos
-                .Include(e => e.RolProfesional)
+            var tipoArticulo = await _context.TipoArticulos
+                .Include(t => t.Estado)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (elenco == null)
+            if (tipoArticulo == null)
             {
                 return NotFound();
             }
 
-            return View(elenco);
+            return View(tipoArticulo);
         }
 
-        // POST: Elenco/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var elenco = await _context.Elencos.FindAsync(id);
-            if (elenco != null)
+            var tipoArticulo = await _context.TipoArticulos.FindAsync(id);
+            if (tipoArticulo != null)
             {
-                _context.Elencos.Remove(elenco);
+                _context.TipoArticulos.Remove(tipoArticulo);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ElencoExists(long id)
+        private bool TipoArticuloExists(long id)
         {
-            return _context.Elencos.Any(e => e.Id == id);
+            return _context.TipoArticulos.Any(e => e.Id == id);
         }
     }
 }
