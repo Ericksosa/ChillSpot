@@ -8,8 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 
-namespace ChillSpot.Controllers
+namespace ChillSpot.Areas.Administrador.Controllers
 {
+    [Area("Administrador")]
     public class IdiomasController : Controller
     {
         private readonly chillSpotDbContext _context;

@@ -8,23 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 
-namespace ChillSpot.Controllers
+namespace ChillSpot.Areas.Administrador.Controllers
 {
-    public class UsuariosController : Controller
+    [Area("Administrador")]
+    public class ElencoController : Controller
     {
         private readonly chillSpotDbContext _context;
 
-        public UsuariosController(chillSpotDbContext context)
+        public ElencoController(chillSpotDbContext context)
         {
             _context = context;
         }
 
+        // GET: Elenco
         public async Task<IActionResult> Index()
         {
-            var chillSpotDbContext = _context.Usuarios.Include(u => u.Rol);
+            var chillSpotDbContext = _context.Elencos.Include(e => e.RolProfesional);
             return View(await chillSpotDbContext.ToListAsync());
         }
 
+        // GET: Elenco/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -32,37 +35,42 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios
-                .Include(u => u.Rol)
+            var elenco = await _context.Elencos
+                .Include(e => e.RolProfesional)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
+            if (elenco == null)
             {
                 return NotFound();
             }
 
-            return View(usuario);
+            return View(elenco);
         }
 
+        // GET: Elenco/Create
         public IActionResult Create()
         {
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id");
+            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre");
             return View();
         }
 
+        // POST: Elenco/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Correo,Clave,RolId")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,FechaNacimiento,RolProfesionalId")] Elenco elenco)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(usuario);
+                _context.Add(elenco);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
-            return View(usuario);
+            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
+            return View(elenco);
         }
 
+        // GET: Elenco/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -70,20 +78,23 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
+            var elenco = await _context.Elencos.FindAsync(id);
+            if (elenco == null)
             {
                 return NotFound();
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
-            return View(usuario);
+            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
+            return View(elenco);
         }
 
+        // POST: Elenco/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Correo,Clave,RolId")] Usuario usuario)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Apellido,FechaNacimiento,RolProfesionalId")] Elenco elenco)
         {
-            if (id != usuario.Id)
+            if (id != elenco.Id)
             {
                 return NotFound();
             }
@@ -92,12 +103,12 @@ namespace ChillSpot.Controllers
             {
                 try
                 {
-                    _context.Update(usuario);
+                    _context.Update(elenco);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuarioExists(usuario.Id))
+                    if (!ElencoExists(elenco.Id))
                     {
                         return NotFound();
                     }
@@ -108,10 +119,11 @@ namespace ChillSpot.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
-            return View(usuario);
+            ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
+            return View(elenco);
         }
 
+        // GET: Elenco/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -119,33 +131,35 @@ namespace ChillSpot.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios
-                .Include(u => u.Rol)
+            var elenco = await _context.Elencos
+                .Include(e => e.RolProfesional)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
+            if (elenco == null)
             {
                 return NotFound();
             }
 
-            return View(usuario);
+            return View(elenco);
         }
 
+        // POST: Elenco/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario != null)
+            var elenco = await _context.Elencos.FindAsync(id);
+            if (elenco != null)
             {
-                _context.Usuarios.Remove(usuario);
+                _context.Elencos.Remove(elenco);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private bool UsuarioExists(long id)
+
+        private bool ElencoExists(long id)
         {
-            return _context.Usuarios.Any(e => e.Id == id);
+            return _context.Elencos.Any(e => e.Id == id);
         }
     }
 }

@@ -32,9 +32,15 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+
 
 // Si usas Blazor Server, mapea el componente raíz (descomenta si tienes App.razor)
 // app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
