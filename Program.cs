@@ -15,6 +15,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Home/Index";
+        options.AccessDeniedPath = "/Home/AccesoDenegado";
+    });
+
 var app = builder.Build();
 
 // Configurar el pipeline HTTP

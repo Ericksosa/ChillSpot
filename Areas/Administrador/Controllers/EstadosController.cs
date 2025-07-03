@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
+    [Authorize(Roles = "1")]
     [Area("Administrador")]
     public class EstadosController : Controller
     {
