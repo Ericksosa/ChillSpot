@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ChillSpot.Migrations
 {
     /// <inheritdoc />
-    public partial class chillSpotMigration : Migration
+    public partial class chillspotMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -321,7 +321,7 @@ namespace ChillSpot.Migrations
                     Cedula = table.Column<long>(type: "bigint", nullable: false),
                     TandaLabor = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     PorcientoComision = table.Column<decimal>(type: "decimal(18,0)", nullable: true),
-                    FechaIngreso = table.Column<DateOnly>(type: "date", nullable: false),
+                    FechaIngreso = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Estado_Id = table.Column<long>(type: "bigint", nullable: false),
                     Usuario_Id = table.Column<long>(type: "bigint", nullable: false)
                 },

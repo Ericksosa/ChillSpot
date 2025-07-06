@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using ChillSpot.Filters;
 using ChillSpot.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace ChillSpot.Areas.Cliente.Controllers
 {
     [Authorize(Roles = "2")]
     [Area("Cliente")]
+    [SessionAuthorize("2")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,6 +22,13 @@ namespace ChillSpot.Areas.Cliente.Controllers
         {
             return View();
         }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home", new { area = "" });
+        }
+
 
         public IActionResult Privacy()
         {
