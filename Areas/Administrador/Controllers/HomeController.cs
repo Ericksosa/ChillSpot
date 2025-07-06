@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
-    [Authorize(Roles = "1")]
     [Area("Administrador")]
     [SessionAuthorize("1")]
     public class HomeController : Controller
