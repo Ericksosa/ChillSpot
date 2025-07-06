@@ -15,6 +15,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Agregar servicios de Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Configurar el pipeline HTTP
@@ -27,6 +35,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// Habilitar Session antes de Authorization
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -38,9 +49,6 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
-
 
 // Si usas Blazor Server, mapea el componente raíz (descomenta si tienes App.razor)
 // app.MapRazorComponents<App>().AddInteractiveServerRenderMode();

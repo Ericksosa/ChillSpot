@@ -23,9 +23,14 @@ namespace ChillSpot.Controllers
         {
             var usuario = _context.Usuarios
                 .FirstOrDefault(u => u.Correo == email && u.Clave == password);
+
             if (usuario != null)
             {
-                TempData["Nombre"] = usuario.Nombre;
+                // Guardar datos en sesión
+                HttpContext.Session.SetString("UsuarioAutenticado", "true");
+                HttpContext.Session.SetString("Rol", usuario.RolId?.ToString() ?? "");
+                HttpContext.Session.SetString("Nombre", usuario.Nombre ?? "");
+
                 if (usuario.RolId == 1)
                     return RedirectToAction("Index", "Home", new { area = "Administrador" });
                 else if (usuario.RolId == 2)
@@ -35,5 +40,6 @@ namespace ChillSpot.Controllers
             ViewBag.Error = "Credenciales inválidas";
             return View();
         }
+
     }
 }
