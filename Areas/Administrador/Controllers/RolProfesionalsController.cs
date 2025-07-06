@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
+using ChillSpot.Filters;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
     [Area("Administrador")]
+    [SessionAuthorize("1")]
     public class RolProfesionalsController : Controller
     {
         private readonly chillSpotDbContext _context;

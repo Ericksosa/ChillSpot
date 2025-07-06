@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
 using Microsoft.AspNetCore.Authorization;
+using ChillSpot.Filters;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
-    [Authorize(Roles = "1")]
+    
     [Area("Administrador")]
+    [SessionAuthorize("1")]
     public class EmpleadosController : Controller
     {
         private readonly chillSpotDbContext _context;
