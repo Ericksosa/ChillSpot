@@ -1,5 +1,8 @@
 using ChillSpot.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ChillSpot.Controllers
 {
@@ -19,27 +22,25 @@ namespace ChillSpot.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string email, string password)
+        public async Task<IActionResult> Index(string email, string password)
         {
             var usuario = _context.Usuarios
                 .FirstOrDefault(u => u.Correo == email && u.Clave == password);
 
             if (usuario != null)
             {
-                // Guardar datos en sesiÛn
+                // Guardar datos en sesi√≥n
                 HttpContext.Session.SetString("UsuarioAutenticado", "true");
                 HttpContext.Session.SetString("Rol", usuario.RolId?.ToString() ?? "");
                 HttpContext.Session.SetString("Nombre", usuario.Nombre ?? "");
-
                 if (usuario.RolId == 1)
                     return RedirectToAction("Index", "Home", new { area = "Administrador" });
                 else if (usuario.RolId == 2)
                     return RedirectToAction("Index", "Home", new { area = "Cliente" });
             }
 
-            ViewBag.Error = "Credenciales inv·lidas";
+            ViewBag.Error = "Credenciales inv√°lidas";
             return View();
         }
-
     }
 }

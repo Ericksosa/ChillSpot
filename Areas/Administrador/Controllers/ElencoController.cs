@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ChillSpot.Data;
 using ChillSpot.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
+    [Authorize(Roles = "1")]
     [Area("Administrador")]
     public class ElencoController : Controller
     {
@@ -20,14 +22,20 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
-        // GET: Elenco
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var chillSpotDbContext = _context.Elencos.Include(e => e.RolProfesional);
-            return View(await chillSpotDbContext.ToListAsync());
+            var elencos = _context.Elencos.Include(u => u.RolProfesional).AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                elencos = elencos.Where(u =>
+                u.Nombre.Contains(searchString) ||
+                u.Apellido.Contains(searchString));
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            return View(await elencos.ToListAsync());
         }
 
-        // GET: Elenco/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)

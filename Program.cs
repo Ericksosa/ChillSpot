@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Obtener la cadena de conexión desde la configuración
+// Obtener la cadena de conexiÃ³n desde la configuraciÃ³n
 var connectionString = builder.Configuration["ConexionSql"];
 
-// Registrar el DbContext usando la cadena de conexión
+// Registrar el DbContext usando la cadena de conexiÃ³n
 builder.Services.AddDbContext<chillSpotDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -14,7 +14,6 @@ builder.Services.AddDbContext<chillSpotDbContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
 // Agregar servicios de Session
 builder.Services.AddSession(options =>
 {
@@ -50,7 +49,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Si usas Blazor Server, mapea el componente raíz (descomenta si tienes App.razor)
+// Si usas Blazor Server, mapea el componente raÃ­z (descomenta si tienes App.razor)
 // app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 app.Run();

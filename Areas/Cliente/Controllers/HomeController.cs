@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using ChillSpot.Filters;
 using ChillSpot.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChillSpot.Areas.Cliente.Controllers
 {
+    [Authorize(Roles = "2")]
     [Area("Cliente")]
     [SessionAuthorize("2")]
     public class HomeController : Controller
