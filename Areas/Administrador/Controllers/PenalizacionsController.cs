@@ -69,7 +69,6 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(penalizacion);
         }
 
-        
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -86,7 +85,6 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(penalizacion);
         }
 
-   
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Tipo,Monto,Descripcion,EstadoId")] Penalizacion penalizacion)

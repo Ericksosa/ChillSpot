@@ -25,7 +25,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
         // GET: Administrador/Reservas
         public async Task<IActionResult> Index()
         {
-            var chillSpotDbContext = _context.Reservas.Include(r => r.Articulo).Include(r => r.Cliente).Include(r => r.Empleado).Include(r => r.Estado).Include(r => r.IdDescuentoNavigation).Include(r => r.Penalizacion);
+            var chillSpotDbContext = _context.Reservas.Include(r => r.Articulo).Include(r => r.Cliente).Include(r => r.Empleado).Include(r => r.Estado).Include(r => r.IdDescuentoNavigation).Include(r => r.Penalizacion).Where(r => r.EstadoId == 1);
             return View(await chillSpotDbContext.ToListAsync());
         }
 
@@ -44,7 +44,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 .Include(r => r.Estado)
                 .Include(r => r.IdDescuentoNavigation)
                 .Include(r => r.Penalizacion)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.EstadoId == 1);
             if (reserva == null)
             {
                 return NotFound();
@@ -65,9 +65,8 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View();
         }
 
-        // POST: Administrador/Reservas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+   
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ArticuloId,EstadoId,ClienteId,FechaCreacion,IdDescuento,DuracionReserva,EmpleadoId,MontoTotal,PenalizacionId")] Reserva reserva)
@@ -95,7 +94,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            var reserva = await _context.Reservas.FindAsync(id);
+            var reserva = await _context.Reservas.FirstOrDefaultAsync(r => r.Id == id && r.EstadoId == 1); 
             if (reserva == null)
             {
                 return NotFound();
@@ -109,9 +108,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(reserva);
         }
 
-        // POST: Administrador/Reservas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ArticuloId,EstadoId,ClienteId,FechaCreacion,IdDescuento,DuracionReserva,EmpleadoId,MontoTotal,PenalizacionId")] Reserva reserva)
@@ -165,7 +162,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 .Include(r => r.Estado)
                 .Include(r => r.IdDescuentoNavigation)
                 .Include(r => r.Penalizacion)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.EstadoId == 1);
             if (reserva == null)
             {
                 return NotFound();

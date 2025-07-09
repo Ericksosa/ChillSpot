@@ -23,14 +23,12 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
-        // GET: Clientes
         public async Task<IActionResult> Index()
         {
             var chillSpotDbContext = _context.Clientes.Include(c => c.Estado).Include(c => c.Usuario);
             return View(await chillSpotDbContext.ToListAsync());
         }
 
-        // GET: Clientes/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -50,16 +48,19 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Create
         public IActionResult Create()
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
+            ViewData["EstadoId"] = new SelectList(
+                _context.Estados.Select(e => new { e.Id, Nombre = e.Id + " - " + e.Nombre }),
+                "Id", "Nombre"
+            );
 
             var usedUsuarioIdsClientes = _context.Clientes.Select(c => c.UsuarioId).ToList();
             var usedUsuarioIdsEmpleados = _context.Empleados.Select(e => e.UsuarioId).ToList();
 
             var availableUsuarios = _context.Usuarios
                 .Where(u => !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
+                .Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre })
                 .ToList();
 
             if (!availableUsuarios.Any())
@@ -72,9 +73,6 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View();
         }
 
-        // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Models.Cliente cliente)
@@ -86,7 +84,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     _context.Add(cliente);
                     await _context.SaveChangesAsync();
 
-                    await transaction.CommitAsync(); 
+                    await transaction.CommitAsync();
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -95,17 +93,21 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     await transaction.RollbackAsync();
 
                     ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
-                    ModelState.AddModelError("", ex.Message); 
+                    ModelState.AddModelError("", ex.Message);
                 }
             }
 
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", cliente.EstadoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", cliente.UsuarioId);
+            ViewData["EstadoId"] = new SelectList(
+                _context.Estados, "Id", "Nombre", cliente.EstadoId
+            );
+            ViewData["UsuarioId"] = new SelectList(
+                _context.Usuarios.Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre }),
+                "Id", "Nombre", cliente.UsuarioId
+            );
 
             return View(cliente);
         }
 
-        // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -119,13 +121,17 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", cliente.EstadoId);
+            ViewData["EstadoId"] = new SelectList(
+                _context.Estados.Select(e => new { e.Id, Nombre = e.Id + " - " + e.Nombre }),
+                "Id", "Nombre", cliente.EstadoId
+            );
 
             var usedUsuarioIdsClientes = _context.Clientes.Where(c => c.Id != id).Select(c => c.UsuarioId).ToList();
             var usedUsuarioIdsEmpleados = _context.Empleados.Select(e => e.UsuarioId).ToList();
 
             var availableUsuarios = _context.Usuarios
                 .Where(u => !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
+                .Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre })
                 .ToList();
 
             if (!availableUsuarios.Any())
@@ -138,9 +144,6 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(cliente);
         }
 
-        // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Nombre,Cedula,TarjetaCr,LimiteCredito,TipoPersona,EstadoId,UsuarioId")] Models.Cliente cliente)
@@ -163,20 +166,25 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync(); 
+                    await transaction.RollbackAsync();
 
                     ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }
             }
 
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", cliente.EstadoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", cliente.UsuarioId);
+            ViewData["EstadoId"] = new SelectList(
+                _context.Estados.Select(e => new { e.Id, Nombre = e.Id + " - " + e.Nombre }),
+                "Id", "Nombre", cliente.EstadoId
+            );
+            ViewData["UsuarioId"] = new SelectList(
+                _context.Usuarios.Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre }),
+                "Id", "Nombre", cliente.UsuarioId
+            );
 
             return View(cliente);
         }
 
-        // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -196,7 +204,6 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(cliente);
         }
 
-        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -218,7 +225,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync(); 
+                    await transaction.RollbackAsync();
 
                     ModelState.AddModelError("", "No se pudo eliminar el cliente. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
