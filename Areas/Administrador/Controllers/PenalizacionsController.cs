@@ -23,13 +23,13 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
-        
+
         public async Task<IActionResult> Index()
         {
             var chillSpotDbContext = _context.Penalizacions.Include(p => p.Estado);
             return View(await chillSpotDbContext.ToListAsync());
         }
-       
+
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -47,14 +47,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
             return View(penalizacion);
         }
-        
+
         public IActionResult Create()
         {
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Tipo,Monto,Descripcion,EstadoId")] Penalizacion penalizacion)
