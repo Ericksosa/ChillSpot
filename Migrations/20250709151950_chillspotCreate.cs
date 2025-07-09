@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ChillSpot.Migrations
 {
     /// <inheritdoc />
-    public partial class chillspotMigration : Migration
+    public partial class chillspotCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
