@@ -26,40 +26,45 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                        <!-- Gestión de Usuarios -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="usuariosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gestión de Usuarios
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="usuariosDropdown">
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Clientes" asp-action="Index">Clientes</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Usuarios" asp-action="Index">Usuario</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Empleados" asp-action="Index">Empleados</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="RolProfesionals" asp-action="Index">Rol Profesional</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Reservas" asp-action="Index">Reservas</a>
+                        <!-- Gestión de Reservas -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="reservasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gestión de Reservas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="reservasDropdown">
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Reservas" asp-action="Index">Reservas</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Estados" asp-action="Index">Estado</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Penalizacions" asp-action="Index">Penalizaciones</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Estados" asp-action="Index">Estado</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Empleados" asp-action="Index">Empleados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Idiomas" asp-action="Index">Gestión de idiomas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="RolProfesionals" asp-action="Index">Rol Profesional</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Elenco" asp-action="Index">Elenco</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Usuarios" asp-action="Index">Usuario</a>
-                        </li
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Penalizacions" asp-action="Index">Penalizaciones</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administrador" asp-controller="TipoArticuloes" asp-action="Index">TipoArticulos</a>
+                        <!-- Gestión de Contenido -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="contenidoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gestión de Contenido
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="contenidoDropdown">
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Idiomas" asp-action="Index">Gestión de idiomas</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="TipoArticuloes" asp-action="Index">TipoArticulos</a></li>
+                                <li><a class="dropdown-item" asp-area="Administrador" asp-controller="Elenco" asp-action="Index">Elenco</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Administrador" asp-controller="Home" asp-action="Logout">Log out</a>
                         </li>
                     </ul>
+
                 </div>
             </div>
         </nav>
