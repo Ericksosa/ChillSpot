@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Asignar Penalización a Reserva";
+}
+
+<h2>Asignar Penalización a Reserva</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="AsignarAReserva" method="post">
+    <div class="form-group">  
+       <label for="ReservaId">Reserva</label>  
+       <select id="ReservaId" name="ReservaId" class="form-control">  
+           @foreach (var reserva in (IEnumerable<SelectListItem>)ViewBag.ReservaId)  
+           {  
+               <option value="@reserva.Value">@reserva.Text</option>  
+           }  
+       </select>  
+    </div>
+    <div class="form-group">
+        <label for="PenalizacionId">Penalización</label>
+        <select id="PenalizacionId" name="PenalizacionId" class="form-control">
+            @foreach (var penalizacion in (IEnumerable<SelectListItem>)ViewBag.PenalizacionId)
+            {
+                <option value="@penalizacion.Value">@penalizacion.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Asignar</button>
+</form>
