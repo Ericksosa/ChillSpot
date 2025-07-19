@@ -1,0 +1,36 @@
+﻿@model ChillSpot.Models.Usuario
+@{
+    ViewData["Title"] = "Asignar Rol";
+}
+
+<h1>Asignar Rol a @Model.Nombre</h1>
+
+@if (Model.Rol != null)
+{
+    <div class="alert alert-info">
+        <strong>Rol actual:</strong> @Model.Rol.Nombre
+    </div>
+}
+
+<form asp-action="AsignarRol">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group mb-3">
+        <label class="form-label fw-bold" for="RolId">Selecciona un Rol:</label>
+        <select asp-for="RolId" class="form-control" asp-items="ViewBag.Roles">
+            <option value="">-- Seleccionar Rol --</option>
+        </select>
+        <span asp-validation-for="RolId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary ms-6">Asignar Rol</button>
+        <a asp-action="Index" class="btn btn-secondary ms-8">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -23,6 +23,8 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
+       
+
         public async Task<IActionResult> Index(string searchString)
         {
             var usuarios = _context.Usuarios.Include(u => u.Rol).AsQueryable();
@@ -37,6 +39,50 @@ namespace ChillSpot.Areas.Administrador.Controllers
             ViewData["CurrentFilter"] = searchString;
             return View(await usuarios.ToListAsync());
         }
+
+        // Acción GET: muestra el formulario
+        public async Task<IActionResult> AsignarRol(long id)
+        {
+            var usuario = await _context.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
+            if (usuario == null) return NotFound();
+
+            // Obtener todos los roles disponibles
+            var roles = await _context.Rols.ToListAsync();
+            ViewBag.Roles = new SelectList(roles, "Id", "Nombre", usuario.RolId);
+
+            return View(usuario);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsignarRol(long? id, long rolId)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var rol = await _context.Rols.FindAsync(rolId);
+            if (rol == null)
+            {
+                ModelState.AddModelError("", "El rol seleccionado no existe.");
+                ViewBag.Roles = new SelectList(_context.Rols, "Id", "Nombre", rolId);
+                return View(usuario);
+            }
+
+            usuario.RolId = rolId;
+            _context.Update(usuario);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         public async Task<IActionResult> Details(long? id)
         {
@@ -160,5 +206,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
         {
             return _context.Usuarios.Any(e => e.Id == id);
         }
+
+       
     }
 }

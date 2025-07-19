@@ -30,7 +30,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(await chillSpotDbContext.ToListAsync());
         }
 
-        
+
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)

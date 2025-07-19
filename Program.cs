@@ -8,7 +8,7 @@ var connectionString = builder.Configuration["ConexionSql"];
 
 // Registrar el DbContext usando la cadena de conexión
 builder.Services.AddDbContext<chillSpotDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Agregar servicios de Blazor y MVC
 builder.Services.AddControllersWithViews();
