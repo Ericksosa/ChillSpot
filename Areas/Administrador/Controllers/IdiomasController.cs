@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ChillSpot.Data;
+using ChillSpot.Filters;
+using ChillSpot.Models;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ChillSpot.Data;
-using ChillSpot.Models;
-using Microsoft.AspNetCore.Authorization;
-using ChillSpot.Filters;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChillSpot.Areas.Administrador.Controllers
 {
@@ -196,6 +198,74 @@ namespace ChillSpot.Areas.Administrador.Controllers
         private bool IdiomaExists(long id)
         {
             return _context.Idiomas.Any(e => e.Id == id);
+        }
+
+        // GET: Idiomas/ExportPdfITextSharp
+        public async Task<IActionResult> ExportPdfITextSharp()
+        {
+            // 1. Obtener todos los idiomas con su estado
+            var idiomas = await _context.Idiomas
+                .Include(i => i.Estado)
+                .ToListAsync();
+
+            // 2. Crear el documento en memoria
+            using var ms = new MemoryStream();
+            var doc = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter.GetInstance(doc, ms);
+            doc.Open();
+
+            // 3. Título
+            var titleFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, 16);
+            var title = new Paragraph("Listado de Idiomas", titleFont)
+            {
+                Alignment = Element.ALIGN_CENTER,
+                SpacingAfter = 20
+            };
+            doc.Add(title);
+
+            // 4. Tabla con columnas: ID, Nombre, Descripción, Estado
+            var table = new PdfPTable(4) { WidthPercentage = 100 };
+            table.SetWidths(new float[] { 1f, 3f, 5f, 2f });
+
+            // 5. Encabezados
+            AddCell(table, "ID", true);
+            AddCell(table, "Nombre", true);
+            AddCell(table, "Descripción", true);
+            AddCell(table, "Estado", true);
+
+            // 6. Filas de datos
+            foreach (var i in idiomas)
+            {
+                AddCell(table, i.Id.ToString());
+                AddCell(table, i.Nombre ?? "—");
+                AddCell(table, i.Descripcion ?? "—");
+                AddCell(table, i.Estado?.Nombre ?? "—");
+            }
+
+            doc.Add(table);
+            doc.Close();
+
+            // 7. Enviar el PDF al cliente
+            var bytes = ms.ToArray();
+            return File(bytes, "application/pdf", "Idiomas.pdf");
+        }
+
+        // Helper para añadir celdas a la tabla
+        private void AddCell(PdfPTable table, string text, bool header = false)
+        {
+            var font = FontFactory.GetFont(
+                BaseFont.HELVETICA,
+                12,
+                header ? Font.BOLD : Font.NORMAL
+            );
+            var cell = new PdfPCell(new Phrase(text, font))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5,
+                BackgroundColor = header ? BaseColor.LIGHT_GRAY : BaseColor.WHITE
+            };
+            table.AddCell(cell);
         }
     }
 }
