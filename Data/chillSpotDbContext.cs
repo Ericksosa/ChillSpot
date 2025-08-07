@@ -46,7 +46,7 @@ public partial class chillSpotDbContext : DbContext
 
     public virtual DbSet<RedPago> RedPagos { get; set; }
 
-    public virtual DbSet<Rentum> Renta { get; set; }
+    public virtual DbSet<Renta> Renta { get; set; }
 
     public virtual DbSet<Reserva> Reservas { get; set; }
 
@@ -417,7 +417,7 @@ public partial class chillSpotDbContext : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<Rentum>(entity =>
+        modelBuilder.Entity<Renta>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Renta__3213E83FDC2286B9");
 

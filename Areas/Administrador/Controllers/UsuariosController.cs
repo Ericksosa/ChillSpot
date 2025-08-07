@@ -104,7 +104,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
         public IActionResult Create()
         {
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id");
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Nombre");
             return View();
         }
 
@@ -134,7 +134,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 return NotFound();
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
 

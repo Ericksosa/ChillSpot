@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Obtener la cadena de conexión desde la configuración
-
-
 // Registrar el DbContext usando la cadena de conexión
 builder.Services.AddDbContext<chillSpotDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));

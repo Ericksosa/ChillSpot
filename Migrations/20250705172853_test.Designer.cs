@@ -603,7 +603,7 @@ namespace ChillSpot.Migrations
                     b.ToTable("RedPago", (string)null);
                 });
 
-            modelBuilder.Entity("ChillSpot.Models.Rentum", b =>
+            modelBuilder.Entity("ChillSpot.Models.Renta", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1085,7 +1085,7 @@ namespace ChillSpot.Migrations
                     b.Navigation("Estado");
                 });
 
-            modelBuilder.Entity("ChillSpot.Models.Rentum", b =>
+            modelBuilder.Entity("ChillSpot.Models.Renta", b =>
                 {
                     b.HasOne("ChillSpot.Models.Estado", "Estado")
                         .WithMany("Renta")

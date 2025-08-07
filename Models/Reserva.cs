@@ -39,7 +39,7 @@ public partial class Reserva
 
     public virtual Penalizacion? Penalizacion { get; set; }
 
-    public virtual ICollection<Rentum> Renta { get; set; } = new List<Rentum>();
+    public virtual ICollection<Renta> Renta { get; set; } = new List<Renta>();
 
     public virtual ICollection<ReservaArticulo> ReservaArticulos { get; set; } = new List<ReservaArticulo>();
 }
