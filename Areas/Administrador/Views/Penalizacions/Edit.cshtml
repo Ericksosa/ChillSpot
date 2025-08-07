@@ -1,54 +1,128 @@
 ﻿@model ChillSpot.Models.Penalizacion
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Penalización";
 }
 
-<h1>Edit</h1>
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Editar Penalización</h1>
+            <p class="text-muted">Modifica la información de la penalización en ChillSpot</p>
+        </div>
+    </div>
 
-<h4>Penalizacion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Form Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Información de la Penalización
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" class="needs-validation" novalidate autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label asp-for="Nombre" class="form-label fw-medium">
+                                <i class="bi bi-flag me-2"></i>Nombre
+                            </label>
+                            <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Nombre de la penalización" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <div class="form-text">Modifique el nombre de la penalización</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Tipo" class="form-label fw-medium">
+                                <i class="bi bi-tag me-2"></i>Tipo
+                            </label>
+                            <input asp-for="Tipo" class="form-control form-control-lg" placeholder="Tipo de penalización" />
+                            <span asp-validation-for="Tipo" class="text-danger"></span>
+                            <div class="form-text">Ejemplo: Por demora, Por daño, etc.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Monto" class="form-label fw-medium">
+                                <i class="bi bi-cash-coin me-2"></i>Monto
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="Monto" class="form-control" placeholder="Monto" type="number" min="0" step="0.01" />
+                                <span class="input-group-text">DOP</span>
+                            </div>
+                            <span asp-validation-for="Monto" class="text-danger"></span>
+                            <div class="form-text">Modifique el monto de la penalización</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Descripcion" class="form-label fw-medium">
+                                <i class="bi bi-card-text me-2"></i>Descripción
+                            </label>
+                            <input asp-for="Descripcion" class="form-control form-control-lg" placeholder="Descripción de la penalización" />
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            <div class="form-text">Modifique la descripción de la penalización</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EstadoId" class="form-label fw-medium">
+                                <i class="bi bi-flag-fill me-2"></i>Estado
+                            </label>
+                            <select asp-for="EstadoId" class="form-select form-select-lg" asp-items="ViewBag.EstadoId">
+                                <option value="" selected disabled>-- Seleccione un estado --</option>
+                            </select>
+                            <span asp-validation-for="EstadoId" class="text-danger"></span>
+                            <div class="form-text">Modifique el estado actual de la penalización</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Tipo" class="control-label"></label>
-                <input asp-for="Tipo" class="form-control" />
-                <span asp-validation-for="Tipo" class="text-danger"></span>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Asegúrese de que los datos de la penalización sean correctos y estén actualizados.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El monto debe ser positivo
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El tipo y estado deben ser claros
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>La descripción ayuda a identificar la penalización
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre penalizaciones, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Penalizaciones
+                    </a>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Monto" class="control-label"></label>
-                <input asp-for="Monto" class="form-control" />
-                <span asp-validation-for="Monto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EstadoId" class="control-label"></label>
-                <select asp-for="EstadoId" class="form-control" asp-items="ViewBag.EstadoId"></select>
-                <span asp-validation-for="EstadoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
