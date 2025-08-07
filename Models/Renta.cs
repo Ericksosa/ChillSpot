@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ChillSpot.Models;
 
-public partial class Rentum
+public partial class Renta
 {
     public long Id { get; set; }
 

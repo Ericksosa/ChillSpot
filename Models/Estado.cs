@@ -33,7 +33,7 @@ public partial class Estado
 
     public virtual ICollection<Penalizacion> Penalizacions { get; set; } = new List<Penalizacion>();
 
-    public virtual ICollection<Rentum> Renta { get; set; } = new List<Rentum>();
+    public virtual ICollection<Renta> Renta { get; set; } = new List<Renta>();
 
     public virtual ICollection<ReservaArticulo> ReservaArticulos { get; set; } = new List<ReservaArticulo>();
 

@@ -59,7 +59,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             var usedUsuarioIdsEmpleados = _context.Empleados.Select(e => e.UsuarioId).ToList();
 
             var availableUsuarios = _context.Usuarios
-                .Where(u => !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
+                .Where(u => u.RolId == 1 && !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
                 .Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre })
                 .ToList();
 
@@ -72,6 +72,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
