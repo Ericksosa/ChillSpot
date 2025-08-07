@@ -1,66 +1,149 @@
 ﻿@model ChillSpot.Models.Empleado
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Empleado";
 }
 
-<h1>Create</h1>
-
-<h4>Empleado</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        @if (ViewData["NoUsuariosDisponibles"] != null)
-        {
-            <div class="alert alert-warning">@ViewData["NoUsuariosDisponibles"]</div>
-        }
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cedula" class="control-label"></label>
-                <input asp-for="Cedula" class="form-control" />
-                <span asp-validation-for="Cedula" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TandaLabor" class="control-label">Tanda</label>
-                <input asp-for="TandaLabor" class="form-control" />
-                <span asp-validation-for="TandaLabor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PorcientoComision" class="control-label">% de comisión</label>
-                <input asp-for="PorcientoComision" class="form-control" />
-                <span asp-validation-for="PorcientoComision" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaIngreso" class="control-label">Fecha de ingreso</label>
-                <input asp-for="FechaIngreso" class="form-control" />
-                <span asp-validation-for="FechaIngreso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EstadoId" class="control-label">Estado</label>
-                <select asp-for="EstadoId" class ="form-control" asp-items="ViewBag.EstadoId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="UsuarioId" class="control-label">Usuario</label>
-                <select asp-for="UsuarioId" class ="form-control" asp-items="ViewBag.UsuarioId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-            <br />
-        </form>
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Nuevo Empleado</h1>
+            <p class="text-muted">Complete el formulario para registrar un nuevo empleado en ChillSpot</p>
+        </div>
     </div>
-</div>
-<br />
-<div>
-    <a asp-action="Index">Back to List</a>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Form Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-plus me-2"></i>Información del Empleado
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewData["NoUsuariosDisponibles"] != null)
+                    {
+                        <div class="alert alert-warning">@ViewData["NoUsuariosDisponibles"]</div>
+                    }
+                    <form asp-action="Create" class="needs-validation" novalidate autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Nombre" class="form-label fw-medium">
+                                <i class="bi bi-person me-2"></i>Nombre
+                            </label>
+                            <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Nombre completo" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <div class="form-text">Ingrese el nombre completo del empleado</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Cedula" class="form-label fw-medium">
+                                <i class="bi bi-card-list me-2"></i>Cédula
+                            </label>
+                            <input asp-for="Cedula" class="form-control form-control-lg" placeholder="Cédula" />
+                            <span asp-validation-for="Cedula" class="text-danger"></span>
+                            <div class="form-text">Ingrese la cédula del empleado</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="TandaLabor" class="form-label fw-medium">
+                                <i class="bi bi-clock-history me-2"></i>Tanda Labor
+                            </label>
+                            <input asp-for="TandaLabor" class="form-control form-control-lg" placeholder="Tanda laboral" />
+                            <span asp-validation-for="TandaLabor" class="text-danger"></span>
+                            <div class="form-text">Ejemplo: Matutina, Vespertina, Nocturna</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="PorcientoComision" class="form-label fw-medium">
+                                <i class="bi bi-percent me-2"></i>% de Comisión
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="PorcientoComision" class="form-control" placeholder="Porcentaje de comisión" type="number" min="0" max="100" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="PorcientoComision" class="text-danger"></span>
+                            <div class="form-text">Indique el porcentaje de comisión (0-100)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="FechaIngreso" class="form-label fw-medium">
+                                <i class="bi bi-calendar-date me-2"></i>Fecha de Ingreso
+                            </label>
+                            <input asp-for="FechaIngreso" class="form-control form-control-lg" type="date" />
+                            <span asp-validation-for="FechaIngreso" class="text-danger"></span>
+                            <div class="form-text">Seleccione la fecha de ingreso del empleado</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EstadoId" class="form-label fw-medium">
+                                <i class="bi bi-flag me-2"></i>Estado
+                            </label>
+                            <select asp-for="EstadoId" class="form-select form-select-lg" asp-items="ViewBag.EstadoId">
+                                <option value="" selected disabled>-- Seleccione un estado --</option>
+                            </select>
+                            <div class="form-text">Seleccione el estado actual del empleado</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="UsuarioId" class="form-label fw-medium">
+                                <i class="bi bi-person-circle me-2"></i>Usuario
+                            </label>
+                            <select asp-for="UsuarioId" class="form-select form-select-lg" asp-items="ViewBag.UsuarioId">
+                                <option value="" selected disabled>-- Seleccione un usuario --</option>
+                            </select>
+                            <div class="form-text">Seleccione el usuario asociado al empleado</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-check-circle me-2"></i>Guardar Empleado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Asegúrese de que los datos del empleado sean correctos y estén actualizados.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Verifique la cédula antes de guardar
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El usuario debe estar disponible y no asignado
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El porcentaje de comisión debe ser positivo
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre empleados, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Empleados
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
