@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Obtener la cadena de conexión desde la configuración
-var connectionString = builder.Configuration["ConexionSql"];
+
 
 // Registrar el DbContext usando la cadena de conexión
 builder.Services.AddDbContext<chillSpotDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
 
 // Agregar servicios de Blazor y MVC
 builder.Services.AddControllersWithViews();

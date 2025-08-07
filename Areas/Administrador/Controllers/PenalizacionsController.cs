@@ -54,12 +54,11 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View();
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Tipo,Monto,Descripcion,EstadoId")] Penalizacion penalizacion)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 _context.Add(penalizacion);
                 await _context.SaveChangesAsync();
@@ -154,5 +153,51 @@ namespace ChillSpot.Areas.Administrador.Controllers
         {
             return _context.Penalizacions.Any(e => e.Id == id);
         }
+
+
+
+        public async Task<IActionResult> AsignarAReserva(long? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            // Solo reservas activas
+            var reservas = await _context.Reservas
+                .Where(r => r.EstadoId == 1)
+                .Include(r => r.Cliente)
+                .ToListAsync();
+
+            var reservaList = reservas.Select(r => new
+            {
+                Id = r.Id,
+                Display = $"Reserva #{r.Id} - Cliente: {(r.Cliente != null ? r.Cliente.Nombre : "Sin cliente")}"
+            });
+
+            ViewData["ReservaId"] = new SelectList(reservaList, "Id", "Display");
+            ViewData["PenalizacionId"] = id; // Para mantener el id de penalización
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsignarAReserva(long ReservaId, long PenalizacionId)
+        {
+            var reserva = await _context.Reservas.FirstOrDefaultAsync(r => r.Id == ReservaId && r.EstadoId == 1);
+            if (reserva == null)
+            {
+                TempData["Error"] = "Reserva no encontrada o inactiva.";
+                return RedirectToAction(nameof(AsignarAReserva), new { id = PenalizacionId });
+            }
+
+            reserva.PenalizacionId = PenalizacionId;
+            _context.Update(reserva);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = "Penalización asociada correctamente a la reserva.";
+            return RedirectToAction("Index", new { id = PenalizacionId });
+        }
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Asignar Penalización a Reserva";
+    var penalizacionId = (long)ViewData["PenalizacionId"];
 }
 
 <h2>Asignar Penalización a Reserva</h2>
@@ -14,23 +15,10 @@
 }
 
 <form asp-action="AsignarAReserva" method="post">
-    <div class="form-group">  
-       <label for="ReservaId">Reserva</label>  
-       <select id="ReservaId" name="ReservaId" class="form-control">  
-           @foreach (var reserva in (IEnumerable<SelectListItem>)ViewBag.ReservaId)  
-           {  
-               <option value="@reserva.Value">@reserva.Text</option>  
-           }  
-       </select>  
-    </div>
+    <input type="hidden" name="PenalizacionId" value="@penalizacionId" />
     <div class="form-group">
-        <label for="PenalizacionId">Penalización</label>
-        <select id="PenalizacionId" name="PenalizacionId" class="form-control">
-            @foreach (var penalizacion in (IEnumerable<SelectListItem>)ViewBag.PenalizacionId)
-            {
-                <option value="@penalizacion.Value">@penalizacion.Text</option>
-            }
-        </select>
+        <label for="ReservaId">Reserva</label>
+        <select name="ReservaId" class="form-control" asp-items="ViewBag.ReservaId"></select>
     </div>
     <button type="submit" class="btn btn-primary">Asignar</button>
 </form>
