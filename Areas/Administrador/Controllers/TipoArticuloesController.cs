@@ -30,7 +30,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             return View(await chillSpotDbContext.ToListAsync());
         }
 
-        
+
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -52,22 +52,35 @@ namespace ChillSpot.Areas.Administrador.Controllers
         
         public IActionResult Create()
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             return View();
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,EstadoId,Descripcion")] TipoArticulo tipoArticulo)
         {
-            if (ModelState.IsValid)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
+                if (!TryValidateModel(tipoArticulo))
+                {
+                    throw new InvalidOperationException("Modelo inválido.");
+                }
+
                 _context.Add(tipoArticulo);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al crear el tipo de artículo.");
+            }
+
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", tipoArticulo.EstadoId);
             return View(tipoArticulo);
         }
 
@@ -83,7 +96,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 return NotFound();
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", tipoArticulo.EstadoId);
             return View(tipoArticulo);
         }
 
@@ -96,27 +109,38 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                try
+                if (!TryValidateModel(tipoArticulo))
                 {
-                    _context.Update(tipoArticulo);
-                    await _context.SaveChangesAsync();
+                    throw new InvalidOperationException("Modelo inválido.");
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TipoArticuloExists(tipoArticulo.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                _context.Update(tipoArticulo);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", tipoArticulo.EstadoId);
+            catch (DbUpdateConcurrencyException)
+            {
+                await transaction.RollbackAsync();
+
+                if (!TipoArticuloExists(tipoArticulo.Id))
+                {
+                    return NotFound();
+                }
+
+                ModelState.AddModelError(string.Empty, "Conflicto de concurrencia al actualizar.");
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al editar el tipo de artículo.");
+            }
+
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", tipoArticulo.EstadoId);
             return View(tipoArticulo);
         }
 
@@ -142,14 +166,31 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var tipoArticulo = await _context.TipoArticulos.FindAsync(id);
-            if (tipoArticulo != null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                _context.TipoArticulos.Remove(tipoArticulo);
-            }
+                var tipoArticulo = await _context.TipoArticulos.FindAsync(id);
+                if (tipoArticulo == null)
+                {
+                    return NotFound();
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                _context.TipoArticulos.Remove(tipoArticulo);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al eliminar el tipo de artículo.");
+
+                var tipoArticulo = await _context.TipoArticulos
+                    .Include(t => t.Estado)
+                    .FirstOrDefaultAsync(t => t.Id == id);
+                return tipoArticulo == null ? NotFound() : View("Delete", tipoArticulo);
+            }
         }
 
         private bool TipoArticuloExists(long id)

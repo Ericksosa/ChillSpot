@@ -48,12 +48,13 @@
                     @Html.DisplayFor(modelItem => item.Clave)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Rol.Id)
+                    @Html.DisplayFor(modelItem => item.Rol.Nombre)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                    <a asp-action="AsignarRol" asp-route-id="@item.Id" class="btn btn-primary btn-sm ms-3"> Asignar Rol</a>
                 </td>
             </tr>
         }

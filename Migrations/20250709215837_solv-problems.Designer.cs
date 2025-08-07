@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChillSpot.Migrations
 {
     [DbContext(typeof(chillSpotDbContext))]
-    [Migration("20250701232657_chillspotMigration")]
-    partial class chillspotMigration
+    [Migration("20250709215837_solv-problems")]
+    partial class solvproblems
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

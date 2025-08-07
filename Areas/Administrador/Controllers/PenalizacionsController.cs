@@ -23,13 +23,13 @@ namespace ChillSpot.Areas.Administrador.Controllers
             _context = context;
         }
 
-        
+
         public async Task<IActionResult> Index()
         {
             var chillSpotDbContext = _context.Penalizacions.Include(p => p.Estado);
             return View(await chillSpotDbContext.ToListAsync());
         }
-       
+
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
