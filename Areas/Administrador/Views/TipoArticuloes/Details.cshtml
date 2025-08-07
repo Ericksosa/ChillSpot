@@ -1,36 +1,111 @@
 ﻿@model ChillSpot.Models.TipoArticulo
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle de Tipo de Artículo";
 }
 
-<h1>Details</h1>
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Detalle de Tipo de Artículo</h1>
+            <p class="text-muted">Consulta la información del tipo de artículo en ChillSpot</p>
+        </div>
+    </div>
 
-<div>
-    <h4>TipoArticulo</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Details Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-collection-fill me-2"></i>Información del Tipo de Artículo
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-secondary">
+                            <i class="bi bi-text-left me-2"></i>Nombre
+                        </dt>
+                        <dd class="col-sm-8 fw-semibold">
+                            @Html.DisplayFor(model => model.Nombre)
+                        </dd>
+
+                        <dt class="col-sm-4 text-secondary">
+                            <i class="bi bi-card-text me-2"></i>Descripción
+                        </dt>
+                        <dd class="col-sm-8 fw-semibold">
+                            @if (string.IsNullOrEmpty(Model.Descripcion))
+                            {
+                                <em class="text-muted">Sin descripción disponible</em>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model.Descripcion)
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4 text-secondary">
+                            <i class="bi bi-flag me-2"></i>Estado
+                        </dt>
+                        <dd class="col-sm-8 fw-semibold">
+                            <span class="badge @(Model.Estado?.Nombre?.Trim().ToLower() == "activo" ? "bg-success" : "bg-danger") fs-6">
+                                @Html.DisplayFor(model => model.Estado.Nombre)
+                            </span>
+                        </dd>
+                    </dl>
+                    <hr class="my-4" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil me-2"></i>Editar Tipo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Este tipo de artículo se utiliza para clasificar el contenido en ChillSpot.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Los tipos activos están disponibles para usar
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>La descripción ayuda a identificar el uso
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Se puede editar la información si es necesario
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre tipos de artículos, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Tipos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Usage Info Card -->
+            <div class="card border-0 bg-info bg-opacity-10 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-info">
+                        <i class="bi bi-lightbulb me-2"></i>Información de Uso
+                    </h5>
+                    <p class="card-text">Los tipos de artículos permiten organizar y clasificar el contenido disponible en la plataforma.</p>
+                    <small class="text-muted">
+                        <i class="bi bi-bookmark me-1"></i>
+                        Ejemplos: Película, Serie, Documental, Corto, etc.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
