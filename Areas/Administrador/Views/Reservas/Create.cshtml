@@ -1,58 +1,153 @@
 ﻿@model ChillSpot.Models.Reserva
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Reserva";
 }
 
-<h1>Create</h1>
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Nueva Reserva</h1>
+            <p class="text-muted">Complete el formulario para registrar una nueva reserva en ChillSpot</p>
+        </div>
+    </div>
 
-<h4>Reserva</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ArticuloId" class="control-label"></label>
-                <select asp-for="ArticuloId" class ="form-control" asp-items="ViewBag.ArticuloId"></select>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Form Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-plus me-2"></i>Información de la Reserva
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" class="needs-validation" novalidate autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="ArticuloId" class="form-label fw-medium">
+                                <i class="bi bi-box-seam me-2"></i>Artículo
+                            </label>
+                            <select asp-for="ArticuloId" class="form-select form-select-lg" asp-items="ViewBag.ArticuloId">
+                                <option value="" selected disabled>-- Seleccione un artículo --</option>
+                            </select>
+                            <span asp-validation-for="ArticuloId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el artículo a reservar</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EstadoId" class="form-label fw-medium">
+                                <i class="bi bi-flag me-2"></i>Estado
+                            </label>
+                            <select asp-for="EstadoId" class="form-select form-select-lg" asp-items="ViewBag.EstadoId">
+                                <option value="" selected disabled>-- Seleccione un estado --</option>
+                            </select>
+                            <span asp-validation-for="EstadoId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el estado de la reserva</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="IdDescuento" class="form-label fw-medium">
+                                <i class="bi bi-percent me-2"></i>Descuento
+                            </label>
+                            <select asp-for="IdDescuento" class="form-select form-select-lg" asp-items="ViewBag.IdDescuento">
+                                <option value="" selected disabled>-- Seleccione un descuento --</option>
+                            </select>
+                            <span asp-validation-for="IdDescuento" class="text-danger"></span>
+                            <div class="form-text">Seleccione el descuento aplicado (si corresponde)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="DuracionReserva" class="form-label fw-medium">
+                                <i class="bi bi-clock me-2"></i>Duración de la Reserva
+                            </label>
+                            <input asp-for="DuracionReserva" class="form-control form-control-lg" placeholder="Duración en días" />
+                            <span asp-validation-for="DuracionReserva" class="text-danger"></span>
+                            <div class="form-text">Ingrese la duración de la reserva en días</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EmpleadoId" class="form-label fw-medium">
+                                <i class="bi bi-person-badge me-2"></i>Empleado
+                            </label>
+                            <select asp-for="EmpleadoId" class="form-select form-select-lg" asp-items="ViewBag.EmpleadoId">
+                                <option value="" selected disabled>-- Seleccione un empleado --</option>
+                            </select>
+                            <span asp-validation-for="EmpleadoId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el empleado responsable</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="MontoTotal" class="form-label fw-medium">
+                                <i class="bi bi-cash-coin me-2"></i>Monto Total
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="MontoTotal" class="form-control" placeholder="Monto total" type="number" min="0" step="0.01" />
+                                <span class="input-group-text">DOP</span>
+                            </div>
+                            <span asp-validation-for="MontoTotal" class="text-danger"></span>
+                            <div class="form-text">Ingrese el monto total de la reserva</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="PenalizacionId" class="form-label fw-medium">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Penalización
+                            </label>
+                            <select asp-for="PenalizacionId" class="form-select form-select-lg" asp-items="ViewBag.PenalizacionId">
+                                <option value="" selected disabled>-- Seleccione una penalización --</option>
+                            </select>
+                            <span asp-validation-for="PenalizacionId" class="text-danger"></span>
+                            <div class="form-text">Seleccione la penalización aplicada (si corresponde)</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-check-circle me-2"></i>Guardar Reserva
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="EstadoId" class="control-label"></label>
-                <select asp-for="EstadoId" class ="form-control" asp-items="ViewBag.EstadoId"></select>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Asegúrese de que los datos de la reserva sean correctos y estén actualizados.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Verifique la duración y el monto antes de guardar
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Seleccione correctamente el artículo y el empleado
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Las penalizaciones y descuentos son opcionales
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre reservas, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Reservas
+                    </a>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="IdDescuento" class="control-label"></label>
-                <select asp-for="IdDescuento" class ="form-control" asp-items="ViewBag.IdDescuento"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DuracionReserva" class="control-label"></label>
-                <input asp-for="DuracionReserva" class="form-control" />
-                <span asp-validation-for="DuracionReserva" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmpleadoId" class="control-label"></label>
-                <select asp-for="EmpleadoId" class ="form-control" asp-items="ViewBag.EmpleadoId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="MontoTotal" class="control-label"></label>
-                <input asp-for="MontoTotal" class="form-control" />
-                <span asp-validation-for="MontoTotal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PenalizacionId" class="control-label"></label>
-                <select asp-for="PenalizacionId" class ="form-control" asp-items="ViewBag.PenalizacionId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
