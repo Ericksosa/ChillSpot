@@ -18,6 +18,18 @@ namespace ChillSpot.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            // Si el usuario ya está autenticado, redirige según el rol
+            var autenticado = HttpContext.Session.GetString("UsuarioAutenticado");
+            var rol = HttpContext.Session.GetString("Rol");
+
+            if (autenticado == "true" && !string.IsNullOrEmpty(rol))
+            {
+                if (rol == "1")
+                    return RedirectToAction("Index", "Home", new { area = "Administrador" });
+                else if (rol == "2")
+                    return RedirectToAction("Index", "Home", new { area = "Cliente" });
+            }
+
             return View();
         }
 
