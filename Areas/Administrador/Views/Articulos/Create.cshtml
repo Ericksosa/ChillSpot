@@ -1,79 +1,182 @@
 ﻿@model ChillSpot.Models.Articulo
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Artículo";
 }
 
-<h1>Create</h1>
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Nuevo Artículo</h1>
+            <p class="text-muted">Complete el formulario para registrar un nuevo artículo en ChillSpot</p>
+        </div>
+    </div>
 
-<h4>Articulo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Form Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-journal-plus me-2"></i>Información del Artículo
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" class="needs-validation" novalidate autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Titulo" class="form-label fw-medium">
+                                <i class="bi bi-card-text me-2"></i>Título
+                            </label>
+                            <input asp-for="Titulo" class="form-control form-control-lg" placeholder="Título del artículo" />
+                            <span asp-validation-for="Titulo" class="text-danger"></span>
+                            <div class="form-text">Ingrese el título del artículo</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="TipoArticuloId" class="form-label fw-medium">
+                                <i class="bi bi-tag me-2"></i>Tipo de Artículo
+                            </label>
+                            <select asp-for="TipoArticuloId" class="form-select form-select-lg" asp-items="ViewBag.TipoArticuloId">
+                                <option value="" selected disabled>-- Seleccione un tipo --</option>
+                            </select>
+                            <span asp-validation-for="TipoArticuloId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el tipo de artículo</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="IdiomaId" class="form-label fw-medium">
+                                <i class="bi bi-translate me-2"></i>Idioma
+                            </label>
+                            <select asp-for="IdiomaId" class="form-select form-select-lg" asp-items="ViewBag.IdiomaId">
+                                <option value="" selected disabled>-- Seleccione un idioma --</option>
+                            </select>
+                            <span asp-validation-for="IdiomaId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el idioma del artículo</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="RentaXdia" class="form-label fw-medium">
+                                <i class="bi bi-currency-dollar me-2"></i>Renta por día
+                            </label>
+                            <input asp-for="RentaXdia" type="number" min="0" step="0.01" class="form-control form-control-lg" placeholder="Precio de renta por día" />
+                            <span asp-validation-for="RentaXdia" class="text-danger"></span>
+                            <div class="form-text">Ingrese el precio de renta por día</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="MontoEntregaTardia" class="form-label fw-medium">
+                                <i class="bi bi-exclamation-circle me-2"></i>Monto por entrega tardía
+                            </label>
+                            <input asp-for="MontoEntregaTardia" type="number" min="0" step="0.01" class="form-control form-control-lg" placeholder="Monto penalización por entrega tardía" />
+                            <span asp-validation-for="MontoEntregaTardia" class="text-danger"></span>
+                            <div class="form-text">Ingrese el monto a cobrar por entrega tardía</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EstadoId" class="form-label fw-medium">
+                                <i class="bi bi-toggle-on me-2"></i>Estado
+                            </label>
+                            <select asp-for="EstadoId" class="form-select form-select-lg" asp-items="ViewBag.EstadoId">
+                                <option value="" selected disabled>-- Seleccione un estado --</option>
+                            </select>
+                            <span asp-validation-for="EstadoId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el estado del artículo</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="GeneroId" class="form-label fw-medium">
+                                <i class="bi bi-bookmark-star me-2"></i>Género
+                            </label>
+                            <select asp-for="GeneroId" class="form-select form-select-lg" asp-items="ViewBag.GeneroId">
+                                <option value="" selected disabled>-- Seleccione un género --</option>
+                            </select>
+                            <span asp-validation-for="GeneroId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el género del artículo</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Sinopsis" class="form-label fw-medium">
+                                <i class="bi bi-file-text me-2"></i>Sinopsis
+                            </label>
+                            <textarea asp-for="Sinopsis" class="form-control form-control-lg" rows="3" placeholder="Breve sinopsis del artículo"></textarea>
+                            <span asp-validation-for="Sinopsis" class="text-danger"></span>
+                            <div class="form-text">Ingrese una breve sinopsis</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="AnioEstreno" class="form-label fw-medium">
+                                <i class="bi bi-calendar me-2"></i>Año de Estreno
+                            </label>
+                            <input asp-for="AnioEstreno" type="number" min="1900" max="2100" class="form-control form-control-lg" placeholder="Año de estreno" />
+                            <span asp-validation-for="AnioEstreno" class="text-danger"></span>
+                            <div class="form-text">Ingrese el año de estreno (ej: 2023)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="PortadaUrl" class="form-label fw-medium">
+                                <i class="bi bi-image me-2"></i>URL de Portada
+                            </label>
+                            <input asp-for="PortadaUrl" class="form-control form-control-lg" placeholder="URL de la portada" />
+                            <span asp-validation-for="PortadaUrl" class="text-danger"></span>
+                            <div class="form-text">Ingrese la URL de la imagen de portada</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="RutaUrl" class="form-label fw-medium">
+                                <i class="bi bi-link-45deg me-2"></i>URL del Archivo
+                            </label>
+                            <input asp-for="RutaUrl" class="form-control form-control-lg" placeholder="URL del archivo digital" />
+                            <span asp-validation-for="RutaUrl" class="text-danger"></span>
+                            <div class="form-text">Ingrese la URL del archivo digital</div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-check-circle me-2"></i>Guardar Artículo
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TipoArticuloId" class="control-label"></label>
-                <select asp-for="TipoArticuloId" class ="form-control" asp-items="ViewBag.TipoArticuloId"></select>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Complete todos los campos con información correcta y válida para registrar un artículo.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El título es obligatorio
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Seleccione un tipo, idioma, género y estado válidos
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Los valores numéricos deben ser positivos
+                        </li>
+                    </ul>
+                    <p class="card-text">Si necesita ayuda, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Artículos
+                    </a>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="IdiomaId" class="control-label"></label>
-                <select asp-for="IdiomaId" class ="form-control" asp-items="ViewBag.IdiomaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="RentaXdia" class="control-label"></label>
-                <input asp-for="RentaXdia" class="form-control" />
-                <span asp-validation-for="RentaXdia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MontoEntregaTardia" class="control-label"></label>
-                <input asp-for="MontoEntregaTardia" class="form-control" />
-                <span asp-validation-for="MontoEntregaTardia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EstadoId" class="control-label"></label>
-                <select asp-for="EstadoId" class ="form-control" asp-items="ViewBag.EstadoId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="GeneroId" class="control-label"></label>
-                <select asp-for="GeneroId" class ="form-control" asp-items="ViewBag.GeneroId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sinopsis" class="control-label"></label>
-                <input asp-for="Sinopsis" class="form-control" />
-                <span asp-validation-for="Sinopsis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AnioEstreno" class="control-label"></label>
-                <input asp-for="AnioEstreno" class="form-control" />
-                <span asp-validation-for="AnioEstreno" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PortadaUrl" class="control-label"></label>
-                <input asp-for="PortadaUrl" class="form-control" />
-                <span asp-validation-for="PortadaUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RutaUrl" class="control-label"></label>
-                <input asp-for="RutaUrl" class="form-control" />
-                <span asp-validation-for="RutaUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
