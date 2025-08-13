@@ -73,13 +73,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 ModelState.AddModelError("", "El rol seleccionado no existe.");
                 ViewBag.Roles = new SelectList(_context.Rols, "Id", "Nombre", rolId);
+                TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                 return View(usuario);
             }
 
             usuario.RolId = rolId;
             _context.Update(usuario);
             await _context.SaveChangesAsync();
-
+            TempData["success"] = "Rol asignado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -112,15 +113,28 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Correo,Clave,RolId")] Usuario usuario)
         {
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Add(usuario);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(usuario);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Usuario creado exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
+
 
         public async Task<IActionResult> Edit(long? id)
         {
@@ -147,29 +161,41 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     _context.Update(usuario);
                     await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Usuario editado exitosamente.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    await transaction.RollbackAsync();
                     if (!UsuarioExists(usuario.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Error de concurrencia al actualizar el usuario.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
-            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Id", usuario.RolId);
+
+            ViewData["RolId"] = new SelectList(_context.Rols, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
+
 
         public async Task<IActionResult> Delete(long? id)
         {
@@ -193,15 +219,35 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Usuarios.Remove(usuario);
+                try
+                {
+                    var usuario = await _context.Usuarios.FindAsync(id);
+                    if (usuario != null)
+                    {
+                        _context.Usuarios.Remove(usuario);
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Usuario eliminado exitosamente.";
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al eliminar el usuario. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al eliminar el usuario. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Si hubo error, intenta mostrar la vista de confirmación nuevamente
+            var usuarioError = await _context.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            return View(usuarioError);
         }
+
         private bool UsuarioExists(long id)
         {
             return _context.Usuarios.Any(e => e.Id == id);

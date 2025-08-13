@@ -76,13 +76,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
                 _context.Add(articulo);
                 await _context.SaveChangesAsync();
-
+                TempData["success"] = "Articulo creado exitosamente.";
                 await transaction.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                 ModelState.AddModelError(string.Empty, "Ocurrió un error al guardar el artículo.");
             }
 
@@ -135,13 +136,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
                 _context.Update(articulo);
                 await _context.SaveChangesAsync();
-
+                TempData["success"] = "Articulo editado exitosamente.";
                 await transaction.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
             {
                 await transaction.RollbackAsync();
+                TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                 if (!ArticuloExists(articulo.Id))
                 {
                     return NotFound();
@@ -210,12 +212,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 _context.Articulos.Remove(articulo);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+                TempData["success"] = "Artículo eliminado exitosamente.";
 
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
                 await transaction.RollbackAsync();
+                TempData["danger"] = "Error al eliminar el artículo. Inténtalo nuevamente.";
                 ModelState.AddModelError(string.Empty, "Ocurrió un error al eliminar el artículo.");
                 var articulo = await _context.Articulos
                     .Include(a => a.Estado)

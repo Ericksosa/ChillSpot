@@ -50,7 +50,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
         public IActionResult Create()
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             return View();
         }
 
@@ -58,15 +58,28 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Tipo,Monto,Descripcion,EstadoId")] Penalizacion penalizacion)
         {
-            if (!ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Add(penalizacion);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(penalizacion);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Penalización creada exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", penalizacion.EstadoId);
             return View(penalizacion);
         }
+
 
         public async Task<IActionResult> Edit(long? id)
         {
@@ -80,7 +93,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 return NotFound();
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", penalizacion.EstadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", penalizacion.EstadoId);
             return View(penalizacion);
         }
 
@@ -93,29 +106,41 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     _context.Update(penalizacion);
                     await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Penalización editada exitosamente.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    await transaction.RollbackAsync();
                     if (!PenalizacionExists(penalizacion.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Error de concurrencia al actualizar la penalización.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al actualizar los datos. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
+
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", penalizacion.EstadoId);
             return View(penalizacion);
         }
+
 
         public async Task<IActionResult> Delete(long? id)
         {
@@ -139,15 +164,35 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var penalizacion = await _context.Penalizacions.FindAsync(id);
-            if (penalizacion != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Penalizacions.Remove(penalizacion);
+                try
+                {
+                    var penalizacion = await _context.Penalizacions.FindAsync(id);
+                    if (penalizacion != null)
+                    {
+                        _context.Penalizacions.Remove(penalizacion);
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Penalización eliminada exitosamente.";
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al eliminar la penalización. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al eliminar la penalización. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.InnerException?.Message ?? ex.Message);
+                }
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Si hubo error, intenta mostrar la vista de confirmación nuevamente
+            var penalizacionError = await _context.Penalizacions
+                .Include(p => p.Estado)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            return View(penalizacionError);
         }
+
 
         private bool PenalizacionExists(long id)
         {
