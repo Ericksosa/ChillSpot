@@ -69,12 +69,36 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,FechaNacimiento,RolProfesionalId")] Elenco elenco)
         {
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Add(elenco);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Si el modelo no es válido, hacemos rollback y devolvemos la vista
+                    if (!ModelState.IsValid)
+                    {
+                        await transaction.RollbackAsync();
+                        ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
+                        return View(elenco);
+                    }
+
+                    _context.Add(elenco);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    TempData["success"] = "Elenco creado exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                    // Opcional: agregar detalle al ModelState para desarrollo
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
+
             ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
             return View(elenco);
         }
@@ -108,26 +132,47 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                try
+                // Si el modelo no es válido devolvemos la vista con los errores
+                if (!ModelState.IsValid)
                 {
-                    _context.Update(elenco);
-                    await _context.SaveChangesAsync();
+                    await transaction.RollbackAsync();
+                    ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
+                    return View(elenco);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ElencoExists(elenco.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                _context.Update(elenco);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                TempData["success"] = "Elenco editado exitosamente.";
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                await transaction.RollbackAsync();
+
+                if (!ElencoExists(elenco.Id))
+                {
+                    return NotFound();
+                }
+
+                TempData["danger"] = "Conflicto de concurrencia al actualizar el elenco.";
+                ModelState.AddModelError(string.Empty, "Conflicto de concurrencia al actualizar.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                TempData["danger"] = "Ocurrió un error al editar el elenco. Inténtalo nuevamente.";
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al editar el elenco.");
+                // útil en desarrollo:
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
             ViewData["RolProfesionalId"] = new SelectList(_context.RolProfesionals, "Id", "Nombre", elenco?.RolProfesionalId);
             return View(elenco);
         }
@@ -156,14 +201,34 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var elenco = await _context.Elencos.FindAsync(id);
-            if (elenco != null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                _context.Elencos.Remove(elenco);
-            }
+                var elenco = await _context.Elencos.FindAsync(id);
+                if (elenco == null)
+                {
+                    TempData["danger"] = "El elenco no existe.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                _context.Elencos.Remove(elenco);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                TempData["success"] = "Elenco eliminado exitosamente.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                TempData["danger"] = "Error al eliminar el elenco. Inténtalo nuevamente.";
+                // Opcional: registrar el detalle en ModelState para debugging en desarrollo
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool ElencoExists(long id)
