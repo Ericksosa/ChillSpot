@@ -117,17 +117,19 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td class="align-middle">@Html.DisplayFor(modelItem => item.FechaCreacion)</td>
+                                    <td class="align-middle">
+                                        @(item.FechaCreacion.HasValue ? item.FechaCreacion.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"))
+                                    </td>
                                     <td class="align-middle">@Html.DisplayFor(modelItem => item.DuracionReserva)</td>
                                     <td class="align-middle fw-bold text-success">$@Html.DisplayFor(modelItem => item.MontoTotal)</td>
                                     <td class="align-middle">
-                                        @(item.Articulo != null ? item.Articulo.Titulo ?? $"ID: {item.Articulo.Id}" : "<span class='text-muted'>Sin artículo</span>")
+                                        @(item.Articulo != null ? item.Articulo.Titulo ?? $"ID: {item.Articulo.Id}" : "")
                                     </td>
                                     <td class="align-middle">
-                                        @(item.Cliente != null ? item.Cliente.Nombre ?? $"ID: {item.Cliente.Id}" : "<span class='text-muted'>Sin cliente</span>")
+                                        @(item.Cliente != null ? item.Cliente.Nombre ?? $"ID: {item.Cliente.Id}" : "")
                                     </td>
                                     <td class="align-middle">
-                                        @(item.Empleado != null ? item.Empleado.Nombre ?? $"ID: {item.Empleado.Id}" : "<span class='text-muted'>Sin empleado</span>")
+                                        @(item.Empleado != null ? item.Empleado.Nombre ?? $"ID: {item.Empleado.Id}" : "")
                                     </td>
                                     <td class="align-middle">
                                         <span class="badge @(item.Estado?.Nombre == "Activo" ? "bg-success" : "bg-danger")">
@@ -135,10 +137,10 @@
                                         </span>
                                     </td>
                                     <td class="align-middle">
-                                        @(item.IdDescuentoNavigation != null ? item.IdDescuentoNavigation.Descripcion ?? $"ID: {item.IdDescuentoNavigation.Id}" : "<span class='text-muted'>Sin descuento</span>")
+                                        @(item.IdDescuentoNavigation != null ? item.IdDescuentoNavigation.Descripcion ?? $"ID: {item.IdDescuentoNavigation.Id}" : "")
                                     </td>
                                     <td class="align-middle">
-                                        @(item.Penalizacion != null ? item.Penalizacion.Descripcion ?? $"ID: {item.Penalizacion.Id}" : "<span class='text-muted'>Sin penalización</span>")
+                                        @(item.Penalizacion != null ? item.Penalizacion.Nombre ?? $"ID: {item.Penalizacion.Id}" : "")
                                     </td>
                                     <td class="align-middle text-end">
                                         <div class="btn-group" role="group">
