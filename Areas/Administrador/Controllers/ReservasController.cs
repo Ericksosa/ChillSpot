@@ -28,7 +28,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
         // GET: Administrador/Reservas
         public async Task<IActionResult> Index()
         {
-            var chillSpotDbContext = _context.Reservas.Include(r => r.Articulo).Include(r => r.Cliente).Include(r => r.Empleado).Include(r => r.Estado).Include(r => r.IdDescuentoNavigation).Include(r => r.Penalizacion).Where(r => r.EstadoId == 1);
+            var chillSpotDbContext = _context.Reservas.Include(r => r.Articulo).Include(r => r.Cliente).Include(r => r.Empleado).Include(r => r.Estado).Include(r => r.IdDescuentoNavigation).Include(r => r.Penalizacion);
             return View(await chillSpotDbContext.ToListAsync());
         }
 
@@ -65,10 +65,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura");
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre");
+
+            // Diccionario de precios por día
+            ViewBag.PreciosPorDia = _context.Articulos.ToDictionary(a => a.Id, a => a.RentaXdia);
+
             return View();
         }
 
-   
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -118,7 +122,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            var reserva = await _context.Reservas.FirstOrDefaultAsync(r => r.Id == id && r.EstadoId == 1); 
+            var reserva = await _context.Reservas.FindAsync(id);
             if (reserva == null)
             {
                 return NotFound();
@@ -129,6 +133,10 @@ namespace ChillSpot.Areas.Administrador.Controllers
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura", reserva.IdDescuento);
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
+
+            // Diccionario de precios por día
+            ViewBag.PreciosPorDia = _context.Articulos.ToDictionary(a => a.Id, a => a.RentaXdia);
+
             return View(reserva);
         }
 
@@ -206,7 +214,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 .Include(r => r.Estado)
                 .Include(r => r.IdDescuentoNavigation)
                 .Include(r => r.Penalizacion)
-                .FirstOrDefaultAsync(m => m.Id == id && m.EstadoId == 1);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (reserva == null)
             {
                 return NotFound();
@@ -220,34 +228,28 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            try
             {
-                try
+                var reserva = await _context.Reservas.FindAsync(id);
+                if (reserva != null)
                 {
-                    var reserva = await _context.Reservas.FindAsync(id);
-                    if (reserva == null)
-                    {
-                        TempData["danger"] = "La reserva no existe o ya fue eliminada.";
-                        return RedirectToAction(nameof(Index));
-                    }
-
                     _context.Reservas.Remove(reserva);
                     await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
                     TempData["success"] = "Reserva eliminada exitosamente.";
                 }
-                catch (Exception ex)
+                else
                 {
-                    await transaction.RollbackAsync();
-                    TempData["danger"] = "Error al eliminar la reserva. Inténtalo nuevamente.";
-                    ModelState.AddModelError("", "Error al eliminar los datos. Inténtalo nuevamente.");
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["danger"] = "No se encontró la reserva para eliminar.";
                 }
+            }
+            catch (Exception ex)
+            {
+                TempData["danger"] = "Error al eliminar la reserva: " + ex.Message;
             }
 
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool ReservaExists(long id)
         {

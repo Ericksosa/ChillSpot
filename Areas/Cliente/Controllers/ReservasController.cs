@@ -62,6 +62,13 @@ namespace ChillSpot.Areas.Cliente.Controllers
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura");
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre");
+<<<<<<< Updated upstream
+=======
+
+            // Diccionario de precios por día
+            ViewBag.PreciosPorDia = _context.Articulos.ToDictionary(a => a.Id, a => a.RentaXdia);
+
+>>>>>>> Stashed changes
             return View();
         }
 
@@ -106,6 +113,13 @@ namespace ChillSpot.Areas.Cliente.Controllers
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura", reserva.IdDescuento);
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
+<<<<<<< Updated upstream
+=======
+
+            // Diccionario de precios por día
+            ViewBag.PreciosPorDia = _context.Articulos.ToDictionary(a => a.Id, a => a.RentaXdia);
+
+>>>>>>> Stashed changes
             return View(reserva);
         }
 

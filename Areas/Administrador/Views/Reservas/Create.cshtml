@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Crear Reserva";
+    var preciosPorDia = ViewBag.PreciosPorDia as IDictionary<long, decimal>;
+
 }
 
 <div class="container mb-5">
@@ -30,7 +32,7 @@
                             <label asp-for="ArticuloId" class="form-label fw-medium">
                                 <i class="bi bi-box-seam me-2"></i>Artículo
                             </label>
-                            <select asp-for="ArticuloId" class="form-select form-select-lg" asp-items="ViewBag.ArticuloId">
+                            <select asp-for="ArticuloId" id="ArticuloId" class="form-select form-select-lg" asp-items="ViewBag.ArticuloId">
                                 <option value="" selected disabled>-- Seleccione un artículo --</option>
                             </select>
                             <span asp-validation-for="ArticuloId" class="text-danger"></span>
@@ -52,7 +54,7 @@
                             <label asp-for="IdDescuento" class="form-label fw-medium">
                                 <i class="bi bi-percent me-2"></i>Descuento
                             </label>
-                            <select asp-for="IdDescuento" class="form-select form-select-lg" asp-items="ViewBag.IdDescuento">
+                            <select asp-for="IdDescuento" id="IdDescuento" class="form-select form-select-lg" asp-items="ViewBag.IdDescuento">
                                 <option value="" selected disabled>-- Seleccione un descuento --</option>
                             </select>
                             <span asp-validation-for="IdDescuento" class="text-danger"></span>
@@ -63,10 +65,12 @@
                             <label asp-for="DuracionReserva" class="form-label fw-medium">
                                 <i class="bi bi-clock me-2"></i>Duración de la Reserva
                             </label>
-                            <input asp-for="DuracionReserva" class="form-control form-control-lg" placeholder="Duración en días" />
+                            <input asp-for="DuracionReserva" class="form-control form-control-lg" placeholder="Duración en días" id="DuracionReserva" />
                             <span asp-validation-for="DuracionReserva" class="text-danger"></span>
                             <div class="form-text">Ingrese la duración de la reserva en días</div>
                         </div>
+
+
 
                         <div class="mb-4">
                             <label asp-for="EmpleadoId" class="form-label fw-medium">
@@ -84,12 +88,13 @@
                                 <i class="bi bi-cash-coin me-2"></i>Monto Total
                             </label>
                             <div class="input-group input-group-lg">
-                                <input asp-for="MontoTotal" class="form-control" placeholder="Monto total" type="number" min="0" step="0.01" />
+                                <input asp-for="MontoTotal" class="form-control" placeholder="Monto total" type="number" min="0" step="0.01" readonly id="MontoTotal" />
                                 <span class="input-group-text">DOP</span>
                             </div>
                             <span asp-validation-for="MontoTotal" class="text-danger"></span>
-                            <div class="form-text">Ingrese el monto total de la reserva</div>
+                            <div class="form-text">El monto total se calcula automáticamente</div>
                         </div>
+
 
                         <div class="mb-4">
                             <label asp-for="PenalizacionId" class="form-label fw-medium">
@@ -162,4 +167,26 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Obtenemos el diccionario desde el servidor
+        var preciosPorDia = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        ViewBag.PreciosPorDia ?? new Dictionary<long, decimal>()
+    ));
+
+        function calcularMontoTotal() {
+            var articuloId = document.getElementById("ArticuloId").value;
+            var duracion = parseInt(document.getElementById("DuracionReserva").value) || 0;
+            var precioPorDia = preciosPorDia[articuloId] || 0;
+            var montoTotal = precioPorDia * duracion;
+            document.getElementById("MontoTotal").value = montoTotal.toFixed(2);
+        }
+
+        // Escuchar cambios en el artículo y en la duración
+        document.getElementById("ArticuloId").addEventListener("change", calcularMontoTotal);
+        document.getElementById("DuracionReserva").addEventListener("input", calcularMontoTotal);
+
+        // Calcular al cargar la página (útil en Edit para mostrar el valor actual)
+        document.addEventListener("DOMContentLoaded", calcularMontoTotal);
+    </script>
+
 }
