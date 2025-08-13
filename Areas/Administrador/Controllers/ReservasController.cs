@@ -63,7 +63,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
             ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre");
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
-            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id");
+            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura");
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre");
             return View();
         }
@@ -76,17 +76,37 @@ namespace ChillSpot.Areas.Administrador.Controllers
         {
             if (ModelState.IsValid)
             {
-                reserva.FechaCreacion = DateOnly.FromDateTime(DateTime.Now);
-                _context.Add(reserva);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        reserva.FechaCreacion = DateOnly.FromDateTime(DateTime.Now);
+
+                        _context.Add(reserva);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Reserva creada exitosamente.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                        ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
+                        ModelState.AddModelError("", ex.Message);
+                    }
+                }
             }
+
+            // Cargamos siempre los SelectList para que la vista pueda mostrarse correctamente
             ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo", reserva.ArticuloId);
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
             ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
-            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
+            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura", reserva.IdDescuento);
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
+
             return View(reserva);
         }
 
@@ -107,12 +127,12 @@ namespace ChillSpot.Areas.Administrador.Controllers
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
             ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
-            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
+            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura", reserva.IdDescuento);
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
             return View(reserva);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ArticuloId,EstadoId,ClienteId,FechaCreacion,IdDescuento,DuracionReserva,EmpleadoId,MontoTotal,PenalizacionId")] Reserva reserva)
@@ -124,30 +144,50 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    _context.Update(reserva);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservaExists(reserva.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(reserva);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Reserva editada exitosamente.";
+                        return RedirectToAction(nameof(Index));
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        await transaction.RollbackAsync();
+
+                        if (!ReservaExists(reserva.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                            ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                            // En vez de throw, devolvemos la vista para evitar romper la ejecución
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                        ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                        ModelState.AddModelError("", ex.Message);
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            // Cargamos siempre los SelectList, incluso si hay error
             ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo", reserva.ArticuloId);
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
             ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
             ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
-            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
+            ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "MontoCobertura", reserva.IdDescuento);
             ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
+
             return View(reserva);
         }
 
@@ -180,13 +220,32 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var reserva = await _context.Reservas.FindAsync(id);
-            if (reserva != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Reservas.Remove(reserva);
+                try
+                {
+                    var reserva = await _context.Reservas.FindAsync(id);
+                    if (reserva == null)
+                    {
+                        TempData["danger"] = "La reserva no existe o ya fue eliminada.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    _context.Reservas.Remove(reserva);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Reserva eliminada exitosamente.";
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al eliminar la reserva. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al eliminar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

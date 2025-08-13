@@ -88,13 +88,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
-
+                    TempData["success"] = "Empleado creado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback(); 
-
+                    transaction.Rollback();
+                    await transaction.CommitAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "Ocurrió un error al guardar los datos. Intenta nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -157,14 +158,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     _context.Update(empleado);
                     await _context.SaveChangesAsync();
 
-                    transaction.Commit(); 
-
+                    transaction.Commit();
+                    TempData["success"] = "Empleado editado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback(); 
-
+                    transaction.Rollback();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "Ocurrió un error al actualizar los datos. Intenta nuevamente.");
                     ModelState.AddModelError("", ex.Message); 
                 }
@@ -201,28 +202,30 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            Console.WriteLine($"ID recibido para borrar: {id}");
+
+            var empleado = await _context.Empleados.FindAsync(id);
+            if (empleado == null)
             {
-                try
-                {
-                    var empleado = await _context.Empleados.FindAsync(id);
-                    if (empleado != null)
-                    {
-                        _context.Empleados.Remove(empleado);
-                        await _context.SaveChangesAsync();
+                TempData["error"] = "Empleado no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
 
-                        transaction.Commit(); 
-                    }
+            try
+            {
+                _context.Empleados.Remove(empleado);
+                var filasAfectadas = await _context.SaveChangesAsync();
+                Console.WriteLine($"Filas afectadas: {filasAfectadas}");
 
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-
-                    ModelState.AddModelError("", "No se pudo eliminar el empleado. Intenta nuevamente.");
-                    ModelState.AddModelError("", ex.Message); 
-                }
+                TempData["success"] = "Empleado eliminado exitosamente.";
+            }
+            catch (DbUpdateException)
+            {
+                TempData["error"] = "No se puede eliminar el empleado porque tiene registros relacionados.";
+            }
+            catch (Exception)
+            {
+                TempData["error"] = "Ocurrió un error al eliminar el empleado.";
             }
 
             return RedirectToAction(nameof(Index));

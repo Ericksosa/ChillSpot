@@ -51,7 +51,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
         // GET: Administrador/RolProfesionals/Create
         public IActionResult Create()
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             return View();
         }
 
@@ -62,13 +62,24 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,EstadoId")] RolProfesional rolProfesional)
         {
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Add(rolProfesional);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(rolProfesional);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Rol profesional creado exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                }
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", rolProfesional.EstadoId);
+
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", rolProfesional.EstadoId);
             return View(rolProfesional);
         }
 
@@ -85,7 +96,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 return NotFound();
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", rolProfesional.EstadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", rolProfesional.EstadoId);
             return View(rolProfesional);
         }
 
@@ -101,28 +112,26 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     _context.Update(rolProfesional);
                     await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Rol profesional editado exitosamente.";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!RolProfesionalExists(rolProfesional.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
+                ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", rolProfesional.EstadoId);
+                return View(rolProfesional);
             }
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", rolProfesional.EstadoId);
-            return View(rolProfesional);
         }
 
         // GET: Administrador/RolProfesionals/Delete/5
@@ -149,15 +158,32 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var rolProfesional = await _context.RolProfesionals.FindAsync(id);
-            if (rolProfesional != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.RolProfesionals.Remove(rolProfesional);
-            }
+                try
+                {
+                    var rolProfesional = await _context.RolProfesionals.FindAsync(id);
+                    if (rolProfesional != null)
+                    {
+                        _context.RolProfesionals.Remove(rolProfesional);
+                        await _context.SaveChangesAsync();
+                        TempData["success"] = "Rol profesional eliminado exitosamente.";
+                        await transaction.CommitAsync();
+                    }
 
-            await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al borrar el rol profesional. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "No se pudo eliminar el rol profesional. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
+        
 
         private bool RolProfesionalExists(long id)
         {

@@ -62,10 +62,27 @@ namespace ChillSpot.Areas.Administrador.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(estado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        _context.Add(estado);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Estado creado exitosamente.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                        ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
+                        ModelState.AddModelError("", ex.Message);
+                    }
+                }
             }
+
             return View(estado);
         }
 
@@ -99,23 +116,40 @@ namespace ChillSpot.Areas.Administrador.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    _context.Update(estado);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EstadoExists(estado.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(estado);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        TempData["success"] = "Estado editado exitosamente.";
+                        return RedirectToAction(nameof(Index));
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        await transaction.RollbackAsync();
+
+                        if (!EstadoExists(estado.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            TempData["danger"] = "Error de concurrencia al actualizar los datos.";
+                            ModelState.AddModelError("", "Error de concurrencia al actualizar los datos.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
+                        ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
+                        ModelState.AddModelError("", ex.Message);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+             
             }
             return View(estado);
         }
@@ -143,13 +177,32 @@ namespace ChillSpot.Areas.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var estado = await _context.Estados.FindAsync(id);
-            if (estado != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                _context.Estados.Remove(estado);
+                try
+                {
+                    var estado = await _context.Estados.FindAsync(id);
+                    if (estado == null)
+                    {
+                        TempData["danger"] = "El estado no existe o ya fue eliminado.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    _context.Estados.Remove(estado);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Estado eliminado exitosamente.";
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al eliminar el estado. Inténtalo nuevamente.";
+                    ModelState.AddModelError("", "Error al eliminar los datos. Inténtalo nuevamente.");
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
