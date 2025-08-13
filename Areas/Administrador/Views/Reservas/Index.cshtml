@@ -138,7 +138,7 @@
                                         @(item.IdDescuentoNavigation != null ? item.IdDescuentoNavigation.Descripcion ?? $"ID: {item.IdDescuentoNavigation.Id}" : "<span class='text-muted'>Sin descuento</span>")
                                     </td>
                                     <td class="align-middle">
-                                        @(item.Penalizacion != null ? item.Penalizacion.Descripcion ?? $"ID: {item.Penalizacion.Id}" : "<span class='text-muted'>Sin penalización</span>")
+                                        @(item.Penalizacion != null ? item.Penalizacion.Nombre ?? $"ID: {item.Penalizacion.Id}" : "<span class='text-muted'>Sin penalización</span>")
                                     </td>
                                     <td class="align-middle text-end">
                                         <div class="btn-group" role="group">

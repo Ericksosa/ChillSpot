@@ -58,8 +58,8 @@
                             <i class="bi bi-flag me-2"></i>@Html.DisplayNameFor(model => model.Estado)
                         </dt>
                         <dd class="col-sm-8">
-                            <span class="badge @(Model.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
-                                @Html.DisplayFor(model => model.Estado.Descripcion)
+                            <span class="badge @(Model.Estado?.Nombre == "Activo" ? "bg-success" : "bg-danger")">
+                                @Html.DisplayFor(model => model.Estado.Nombre)
                             </span>
                         </dd>
                     </dl>

@@ -111,8 +111,8 @@
                                     <h6 class="mb-1 fw-semibold">@Html.DisplayFor(modelItem => item.Descripcion)</h6>
                                     <small class="text-muted">Monto: $@Html.DisplayFor(modelItem => item.MontoCobertura)</small>
                                 </div>
-                                <span class="badge @(item.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
-                                    @Html.DisplayFor(modelItem => item.Estado.Descripcion)
+                                <span class="badge @(item.Estado?.Nombre == "Activo" ? "bg-success" : "bg-danger")">
+                                    @item.Estado?.Nombre
                                 </span>
                             </div>
 
@@ -188,8 +188,8 @@
                                             <span class="text-dark">@Html.DisplayFor(modelItem => item.EmpleadoCreador.Nombre)</span>
                                         </td>
                                         <td class="align-middle">
-                                            <span class="badge @(item.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
-                                                @Html.DisplayFor(modelItem => item.Estado.Descripcion)
+                                            <span class="badge @(item.Estado?.Nombre == "Activo" ? "bg-success" : "bg-danger")">
+                                                @Html.DisplayFor(modelItem => item.Estado. Nombre)
                                             </span>
                                         </td>
                                         <td class="align-middle text-end">
