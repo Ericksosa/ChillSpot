@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace ChillSpot.Controllers
 {
@@ -45,6 +46,9 @@ namespace ChillSpot.Controllers
                 HttpContext.Session.SetString("UsuarioAutenticado", "true");
                 HttpContext.Session.SetString("Rol", usuario.RolId?.ToString() ?? "");
                 HttpContext.Session.SetString("Nombre", usuario.Nombre ?? "");
+                HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
+
+
                 if (usuario.RolId == 1)
                     return RedirectToAction("Index", "Home", new { area = "Administrador" });
                 else if (usuario.RolId == 2)

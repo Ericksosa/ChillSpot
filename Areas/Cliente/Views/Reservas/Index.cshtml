@@ -106,10 +106,7 @@
                                 <th class="border-0 fw-semibold text-muted small text-uppercase">Monto Total</th>
                                 <th class="border-0 fw-semibold text-muted small text-uppercase">Artículo</th>
                                 <th class="border-0 fw-semibold text-muted small text-uppercase">Cliente</th>
-                                <th class="border-0 fw-semibold text-muted small text-uppercase">Empleado</th>
                                 <th class="border-0 fw-semibold text-muted small text-uppercase">Estado</th>
-                                <th class="border-0 fw-semibold text-muted small text-uppercase">Descuento</th>
-                                <th class="border-0 fw-semibold text-muted small text-uppercase">Penalización</th>
                                 <th class="border-0 fw-semibold text-muted small text-uppercase text-end">Acciones</th>
                             </tr>
                         </thead>
@@ -129,19 +126,25 @@
                                         @(item.Cliente != null ? item.Cliente.Nombre ?? $"ID: {item.Cliente.Id}" : "")
                                     </td>
                                     <td class="align-middle">
+<<<<<<< Updated upstream
                                         @(item.Empleado != null ? item.Empleado.Nombre ?? $"ID: {item.Empleado.Id}" : "")
                                     </td>
                                     <td class="align-middle">
+=======
+>>>>>>> Stashed changes
                                         <span class="badge @(item.Estado?.Nombre == "Activo" ? "bg-success" : "bg-danger")">
                                             @(item.Estado != null ? item.Estado.Nombre : "Sin estado")
                                         </span>
                                     </td>
+<<<<<<< Updated upstream
                                     <td class="align-middle">
                                         @(item.IdDescuentoNavigation != null ? item.IdDescuentoNavigation.Descripcion ?? $"ID: {item.IdDescuentoNavigation.Id}" : "")
                                     </td>
                                     <td class="align-middle">
                                         @(item.Penalizacion != null ? item.Penalizacion.Nombre ?? $"ID: {item.Penalizacion.Id}" : "")
                                     </td>
+=======
+>>>>>>> Stashed changes
                                     <td class="align-middle text-end">
                                         <div class="btn-group" role="group">
                                             <a asp-action="Edit" asp-route-id="@item.Id"

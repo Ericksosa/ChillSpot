@@ -50,34 +50,12 @@
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="IdDescuento" class="form-label fw-medium">
-                                <i class="bi bi-percent me-2"></i>Descuento
-                            </label>
-                            <select asp-for="IdDescuento" class="form-select form-select-lg" asp-items="ViewBag.IdDescuento">
-                                <option value="" selected disabled>-- Seleccione un descuento --</option>
-                            </select>
-                            <span asp-validation-for="IdDescuento" class="text-danger"></span>
-                            <div class="form-text">Modifique el descuento aplicado (si corresponde)</div>
-                        </div>
-
-                        <div class="mb-4">
                             <label asp-for="DuracionReserva" class="form-label fw-medium">
                                 <i class="bi bi-clock me-2"></i>Duración de la Reserva
                             </label>
                             <input asp-for="DuracionReserva" class="form-control form-control-lg" placeholder="Duración en días" />
                             <span asp-validation-for="DuracionReserva" class="text-danger"></span>
                             <div class="form-text">Modifique la duración de la reserva en días</div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="EmpleadoId" class="form-label fw-medium">
-                                <i class="bi bi-person-badge me-2"></i>Empleado
-                            </label>
-                            <select asp-for="EmpleadoId" class="form-select form-select-lg" asp-items="ViewBag.EmpleadoId">
-                                <option value="" selected disabled>-- Seleccione un empleado --</option>
-                            </select>
-                            <span asp-validation-for="EmpleadoId" class="text-danger"></span>
-                            <div class="form-text">Modifique el empleado responsable</div>
                         </div>
 
                         <div class="mb-4">
@@ -105,16 +83,24 @@
 
                         <div class="mb-4">
                             <label asp-for="ClienteId" class="form-label fw-medium">
+<<<<<<< Updated upstream
                                 <i class="bi bi-person-circle me-2"></i>Cliente
+=======
+                                <i class="bi bi-person me-2"></i>Cliente
+>>>>>>> Stashed changes
                             </label>
                             <select asp-for="ClienteId" class="form-select form-select-lg" asp-items="ViewBag.ClienteId">
                                 <option value="" selected disabled>-- Seleccione un cliente --</option>
                             </select>
                             <span asp-validation-for="ClienteId" class="text-danger"></span>
+<<<<<<< Updated upstream
                             <div class="form-text">Seleccione el cliente asociado</div>
                         </div>
+=======
+                            <div class="form-text">Modifique el cliente asignado</div>
+                        </div>
 
-
+>>>>>>> Stashed changes
                         <hr class="my-4">
 
                         <div class="d-flex justify-content-between align-items-center">
