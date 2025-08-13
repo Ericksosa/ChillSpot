@@ -59,12 +59,12 @@ namespace ChillSpot.Areas.Administrador.Controllers
         // GET: Administrador/Reservas/Create
         public IActionResult Create()
         {
-            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Id");
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
-            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Id");
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id");
+            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre");
+            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre");
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre");
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id");
-            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Id");
+            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre");
             return View();
         }
 
@@ -76,16 +76,17 @@ namespace ChillSpot.Areas.Administrador.Controllers
         {
             if (ModelState.IsValid)
             {
+                reserva.FechaCreacion = DateOnly.FromDateTime(DateTime.Now);
                 _context.Add(reserva);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Id", reserva.ArticuloId);
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Id", reserva.EmpleadoId);
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", reserva.EstadoId);
+            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo", reserva.ArticuloId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
-            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Id", reserva.PenalizacionId);
+            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
             return View(reserva);
         }
 
@@ -102,12 +103,12 @@ namespace ChillSpot.Areas.Administrador.Controllers
             {
                 return NotFound();
             }
-            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Id", reserva.ArticuloId);
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Id", reserva.EmpleadoId);
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", reserva.EstadoId);
+            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo", reserva.ArticuloId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nombre", reserva.ClienteId);
+            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
-            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Id", reserva.PenalizacionId);
+            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
             return View(reserva);
         }
 
@@ -141,12 +142,12 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Id", reserva.ArticuloId);
+            ViewData["ArticuloId"] = new SelectList(_context.Articulos, "Id", "Titulo", reserva.ArticuloId);
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", reserva.ClienteId);
-            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Id", reserva.EmpleadoId);
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Id", reserva.EstadoId);
+            ViewData["EmpleadoId"] = new SelectList(_context.Empleados, "Id", "Nombre", reserva.EmpleadoId);
+            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nombre", reserva.EstadoId);
             ViewData["IdDescuento"] = new SelectList(_context.Descuentos, "Id", "Id", reserva.IdDescuento);
-            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Id", reserva.PenalizacionId);
+            ViewData["PenalizacionId"] = new SelectList(_context.Penalizacions, "Id", "Nombre", reserva.PenalizacionId);
             return View(reserva);
         }
 
