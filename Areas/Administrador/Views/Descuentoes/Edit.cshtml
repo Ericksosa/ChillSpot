@@ -1,0 +1,139 @@
+﻿@model ChillSpot.Models.Descuento
+
+@{
+    ViewData["Title"] = "Editar Descuento";
+}
+
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Editar Descuento</h1>
+            <p class="text-muted">Modifica la información del descuento en ChillSpot</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Form Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Información del Descuento
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" class="needs-validation" novalidate autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label asp-for="Descripcion" class="form-label fw-medium">
+                                <i class="bi bi-card-text me-2"></i>Descripción
+                            </label>
+                            <input asp-for="Descripcion" class="form-control form-control-lg" placeholder="Descripción del descuento" />
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            <div class="form-text">Modifique la descripción del descuento</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="MontoCobertura" class="form-label fw-medium">
+                                <i class="bi bi-cash-coin me-2"></i>Monto de Cobertura
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="MontoCobertura" class="form-control" placeholder="Monto de cobertura" type="number" min="0" />
+                                <span class="input-group-text">DOP</span>
+                            </div>
+                            <span asp-validation-for="MontoCobertura" class="text-danger"></span>
+                            <div class="form-text">Modifique el monto máximo cubierto por el descuento</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EmpleadoCreadorId" class="form-label fw-medium">
+                                <i class="bi bi-person-badge me-2"></i>Empleado Creador
+                            </label>
+                            <select asp-for="EmpleadoCreadorId" class="form-select form-select-lg" asp-items="ViewBag.EmpleadoCreadorId">
+                                <option value="" selected disabled>-- Seleccione un empleado --</option>
+                            </select>
+                            <span asp-validation-for="EmpleadoCreadorId" class="text-danger"></span>
+                            <div class="form-text">Modifique el empleado que crea el descuento</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="EstadoId" class="form-label fw-medium">
+                                <i class="bi bi-flag me-2"></i>Estado
+                            </label>
+                            <select asp-for="EstadoId" class="form-select form-select-lg" asp-items="ViewBag.EstadoId">
+                                <option value="" selected disabled>-- Seleccione un estado --</option>
+                            </select>
+                            <span asp-validation-for="EstadoId" class="text-danger"></span>
+                            <div class="form-text">Modifique el estado actual del descuento</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="FechaInicio" class="form-label fw-medium">
+                                <i class="bi bi-calendar-plus me-2"></i>Fecha de Inicio
+                            </label>
+                            <input asp-for="FechaInicio" class="form-control form-control-lg" type="date" />
+                            <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                            <div class="form-text">Modifique la fecha de inicio de vigencia</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="FechaVencimiento" class="form-label fw-medium">
+                                <i class="bi bi-calendar-x me-2"></i>Fecha de Vencimiento
+                            </label>
+                            <input asp-for="FechaVencimiento" class="form-control form-control-lg" type="date" />
+                            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+                            <div class="form-text">Modifique la fecha de vencimiento del descuento</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Asegúrese de que los datos del descuento sean correctos y estén actualizados.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Verifique las fechas antes de guardar
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El monto debe ser positivo
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El estado debe ser correcto
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre descuentos, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Descuentos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

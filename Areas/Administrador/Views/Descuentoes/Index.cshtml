@@ -1,0 +1,313 @@
+﻿@model IEnumerable<ChillSpot.Models.Descuento>
+
+@{
+    ViewData["Title"] = "Gestión de Descuentos";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                <div class="mb-3 mb-md-0">
+                    <h1 class="display-6 fw-bold text-dark mb-2">Gestión de Descuentos</h1>
+                    <p class="text-muted mb-0">Administra y visualiza los descuentos disponibles</p>
+                </div>
+                <div>
+                    <a asp-action="Create" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Nuevo Descuento
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-percent text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total Descuentos</h6>
+                            <h3 class="mb-0 fw-bold">@Model.Count()</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Descuentos Activos</h6>
+                            <h3 class="mb-0 fw-bold">@Model.Count(d => d.Estado?.Descripcion == "Activo")</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-calendar-event-fill text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Vigentes Hoy</h6>
+                            <h3 class="mb-0 fw-bold">
+                                @Model.Count(d => d.FechaInicio <= DateOnly.FromDateTime(DateTime.Today) && d.FechaVencimiento >= DateOnly.FromDateTime(DateTime.Today))
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-semibold">Lista de Descuentos</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-funnel me-1"></i>
+                        Filtrar
+                    </button>
+                    <button class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-download me-1"></i>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <!-- Mobile Cards View (visible on small screens) -->
+                <div class="d-block d-lg-none">
+                    @foreach (var item in Model)
+                    {
+                        <div class="border-bottom p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">@Html.DisplayFor(modelItem => item.Descripcion)</h6>
+                                    <small class="text-muted">Monto: $@Html.DisplayFor(modelItem => item.MontoCobertura)</small>
+                                </div>
+                                <span class="badge @(item.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
+                                    @Html.DisplayFor(modelItem => item.Estado.Descripcion)
+                                </span>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Inicio</small>
+                                    <span class="fw-medium small">@Html.DisplayFor(modelItem => item.FechaInicio)</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Vencimiento</small>
+                                    <span class="fw-medium small">@Html.DisplayFor(modelItem => item.FechaVencimiento)</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Creador</small>
+                                    <span class="fw-medium small">@Html.DisplayFor(modelItem => item.EmpleadoCreador.Nombre)</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Estado</small>
+                                    <span class="fw-medium small">@Html.DisplayFor(modelItem => item.Estado.Descripcion)</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil me-1"></i>
+                                    Editar
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Ver
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i>
+                                    Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Desktop Table View (visible on large screens) -->
+                <div class="d-none d-lg-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Descripción</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Monto</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Inicio</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Vencimiento</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Creador</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase">Estado</th>
+                                    <th class="border-0 fw-semibold text-muted small text-uppercase text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="align-middle">
+                                            <div class="fw-semibold">@Html.DisplayFor(modelItem => item.Descripcion)</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="fw-bold text-success">$@Html.DisplayFor(modelItem => item.MontoCobertura)</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="text-dark">@Html.DisplayFor(modelItem => item.FechaInicio)</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="text-dark">@Html.DisplayFor(modelItem => item.FechaVencimiento)</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="text-dark">@Html.DisplayFor(modelItem => item.EmpleadoCreador.Nombre)</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge @(item.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
+                                                @Html.DisplayFor(modelItem => item.Estado.Descripcion)
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-end">
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                                   class="btn btn-outline-primary btn-sm"
+                                                   data-bs-toggle="tooltip"
+                                                   title="Editar descuento">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a asp-action="Details" asp-route-id="@item.Id"
+                                                   class="btn btn-outline-secondary btn-sm"
+                                                   data-bs-toggle="tooltip"
+                                                   title="Ver detalles">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                                   class="btn btn-outline-danger btn-sm"
+                                                   data-bs-toggle="tooltip"
+                                                   title="Eliminar descuento">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-percent text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-muted mb-2">No hay descuentos registrados</h4>
+                    <p class="text-muted mb-4">Comienza agregando tu primer descuento al sistema.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Crear Primer Descuento
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination (if needed) -->
+        @if (Model.Count() > 10)
+        {
+            <div class="card-footer bg-white border-top">
+                <nav aria-label="Navegación de descuentos">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="#">1</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Custom CSS for additional styling -->
+<style>
+    .card {
+        transition: all 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    .btn-group .btn {
+        border-radius: 0.375rem !important;
+        margin-right: 2px;
+    }
+
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+
+    .bg-opacity-10 {
+        background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+    }
+
+    .bg-success.bg-opacity-10 {
+        background-color: rgba(var(--bs-success-rgb), 0.1) !important;
+    }
+
+    .bg-warning.bg-opacity-10 {
+        background-color: rgba(var(--bs-warning-rgb), 0.1) !important;
+    }
+</style>
+
+<!-- Initialize tooltips -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
