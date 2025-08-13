@@ -1,0 +1,105 @@
+﻿@model ChillSpot.Models.Descuento
+
+@{
+    ViewData["Title"] = "Detalle de Descuento";
+}
+
+<div class="container mb-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Detalle de Descuento</h1>
+            <p class="text-muted">Consulta la información del descuento en ChillSpot</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Details Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-percent me-2"></i>Información del Descuento
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-card-text me-2"></i>@Html.DisplayNameFor(model => model.Descripcion)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Descripcion)
+                        </dd>
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-cash-coin me-2"></i>@Html.DisplayNameFor(model => model.MontoCobertura)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <span class="fw-bold text-success">$@Html.DisplayFor(model => model.MontoCobertura)</span>
+                        </dd>
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-calendar-plus me-2"></i>@Html.DisplayNameFor(model => model.FechaInicio)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.FechaInicio)
+                        </dd>
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-calendar-x me-2"></i>@Html.DisplayNameFor(model => model.FechaVencimiento)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.FechaVencimiento)
+                        </dd>
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-person-badge me-2"></i>@Html.DisplayNameFor(model => model.EmpleadoCreador)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.EmpleadoCreador.Nombre)
+                        </dd>
+                        <dt class="col-sm-4 fw-semibold text-muted">
+                            <i class="bi bi-flag me-2"></i>@Html.DisplayNameFor(model => model.Estado)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Estado?.Descripcion == "Activo" ? "bg-success" : "bg-danger")">
+                                @Html.DisplayFor(model => model.Estado.Descripcion)
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Información Importante
+                    </h5>
+                    <p class="card-text">Verifique que los datos del descuento sean correctos y estén actualizados.</p>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Revise las fechas de vigencia
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El monto debe ser positivo
+                        </li>
+                        <li class="list-group-item bg-transparent border-0 ps-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>El estado debe ser correcto
+                        </li>
+                    </ul>
+                    <p class="card-text">Para más información sobre descuentos, contacte con el equipo de soporte.</p>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-question-circle me-2"></i>Ayuda con Descuentos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
