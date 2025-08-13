@@ -78,7 +78,7 @@
                             <i class="bi bi-exclamation-triangle me-2"></i>Penalización
                         </dt>
                         <dd class="col-sm-8 fw-semibold">
-                            @(Model.Penalizacion != null ? Model.Penalizacion.Descripcion ?? $"ID: {Model.Penalizacion.Id}" : "Sin penalización")
+                            @(Model.Penalizacion != null ? Model.Penalizacion.Nombre ?? $"ID: {Model.Penalizacion.Id}" : "Sin penalización")
                         </dd>
                     </dl>
                     <hr class="my-4" />

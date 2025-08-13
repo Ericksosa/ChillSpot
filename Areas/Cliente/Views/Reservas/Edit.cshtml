@@ -103,6 +103,18 @@
                             <div class="form-text">Modifique la penalización aplicada (si corresponde)</div>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="ClienteId" class="form-label fw-medium">
+                                <i class="bi bi-person-circle me-2"></i>Cliente
+                            </label>
+                            <select asp-for="ClienteId" class="form-select form-select-lg" asp-items="ViewBag.ClienteId">
+                                <option value="" selected disabled>-- Seleccione un cliente --</option>
+                            </select>
+                            <span asp-validation-for="ClienteId" class="text-danger"></span>
+                            <div class="form-text">Seleccione el cliente asociado</div>
+                        </div>
+
+
                         <hr class="my-4">
 
                         <div class="d-flex justify-content-between align-items-center">
