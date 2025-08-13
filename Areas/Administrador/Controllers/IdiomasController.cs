@@ -72,14 +72,14 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     _context.Add(idioma);
                     await _context.SaveChangesAsync();
 
-                    await transaction.CommitAsync(); 
-
+                    await transaction.CommitAsync();
+                    TempData["success"] = "Idioma creado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync(); 
-
+                    await transaction.RollbackAsync();
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message); 
                 }
@@ -127,13 +127,13 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
-
+                    TempData["success"] = "Idioma editado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -177,7 +177,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     {
                         _context.Idiomas.Remove(idioma);
                         await _context.SaveChangesAsync();
-
+                        TempData["success"] = "Idioma eliminado exitosamente.";
                         await transaction.CommitAsync(); // Confirma eliminación si todo va bien
                     }
 
@@ -186,7 +186,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync(); // Revierte cambios en caso de error
-
+                    TempData["danger"] = "Error al eliminar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "No se pudo eliminar el idioma. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }

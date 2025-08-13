@@ -59,7 +59,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
             var usedUsuarioIdsEmpleados = _context.Empleados.Select(e => e.UsuarioId).ToList();
 
             var availableUsuarios = _context.Usuarios
-                .Where(u => u.RolId == 1 && !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
+                .Where(u => u.RolId == 2 && !usedUsuarioIdsClientes.Contains(u.Id) && !usedUsuarioIdsEmpleados.Contains(u.Id))
                 .Select(u => new { u.Id, Nombre = u.Id + " - " + u.Nombre })
                 .ToList();
 
@@ -86,15 +86,13 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
-
+                    TempData["success"] = "Cliente creado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-
-                    ModelState.AddModelError("", "Error al guardar los datos. Inténtalo nuevamente.");
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                 }
             }
 
@@ -162,13 +160,13 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
-
+                    TempData["success"] = "Cliente editado exitosamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-
+                    TempData["danger"] = "Error al guardar los datos. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "Error al actualizar los datos. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -218,7 +216,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                     {
                         _context.Clientes.Remove(cliente);
                         await _context.SaveChangesAsync();
-
+                        TempData["success"] = "Cliente elimimado exitosamente.";
                         await transaction.CommitAsync();
                     }
 
@@ -227,7 +225,7 @@ namespace ChillSpot.Areas.Administrador.Controllers
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-
+                    TempData["danger"] = "Error al borrar el cliente. Inténtalo nuevamente.";
                     ModelState.AddModelError("", "No se pudo eliminar el cliente. Inténtalo nuevamente.");
                     ModelState.AddModelError("", ex.Message);
                 }
